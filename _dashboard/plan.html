@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="dashboard.css">
+<link rel="stylesheet" href="overrides.css">
 <style>
 :root{--accent:#2E7D4F}
 .dhead{display:flex;align-items:baseline;gap:.4rem;flex-wrap:wrap;margin-bottom:.35rem}
@@ -56,7 +57,7 @@
   <h1>3주 루틴 전체</h1>
   <span class="badge">15세션 · 각 50분</span>
   <p class="lede">2026년 9월 14일부터 10월 2일까지, 평일 저녁 15개 세션의 전 내용이다. 요일마다 성격이 고정되어 있고 주차가 올라갈수록 같은 요일의 양이 늘어난다. 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 세션 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
-  <div class="meta"><span>갱신 <b><time datetime="2026-09-14T15:30+09:00">2026-09-14 15:30 KST</time></b></span></div>
+  <div class="meta"><span>갱신 <b><time datetime="2026-09-14T17:10+09:00">2026-09-14 17:10 KST</time></b></span></div>
 </header>
 
 <!-- ── 요일 설계 · 공통 루틴 ── -->
@@ -131,8 +132,28 @@
 <script src="dashboard.js"></script>
 <script>
 (function () {
-  const P = window.DB_PLAN, esc = DB.esc, $ = id => document.getElementById(id);
-  const d = window.EXLOG.load(), today = window.EXLOG.todayKey();
+  const P = window.DB_PLAN, LOG = window.EXLOG, esc = DB.esc, $ = id => document.getElementById(id);
+  const d = LOG.load(), today = LOG.todayKey();
+  const canSave = LOG.available();
+
+  /* ── 완료 여부 ──
+     상태는 기록 페이지와 같은 저장소를 본다. 여기서 누르면 거기에도 바로 반영된다. */
+  const LABEL = { done: '완료', today: '오늘', missed: '미기록', todo: '예정' };
+  const stateOf = x => (d.sessions[x.date] || {}).done ? 'done'
+    : x.date === today ? 'today'
+    : x.date < today ? 'missed' : 'todo';
+
+  const stateBtn = x => {
+    const st = stateOf(x);
+    return '<button class="dstate" type="button" data-date="' + x.date + '" data-state="' + st + '"' +
+      ' aria-pressed="' + (st === 'done') + '"' +
+      (canSave ? ' title="눌러서 완료 여부를 바꾼다"' : ' disabled title="이 브라우저는 저장을 막고 있어 바꿀 수 없다"') +
+      '>' + LABEL[st] + '</button>';
+  };
+  const weekCount = w => {
+    const ds = P.days.filter(x => x.week === w.no);
+    return ds.filter(x => (d.sessions[x.date] || {}).done).length + ' / ' + ds.length;
+  };
 
   $('wuList').innerHTML = P.fixed.warmup.map(x => '<li>' + esc(x) + '</li>').join('');
   $('cdList').innerHTML = P.fixed.cooldown.map(x => '<li>' + esc(x) + '</li>').join('');
@@ -149,21 +170,20 @@
         '<span>예상 소모 <b>' + w.kcal.toLocaleString() + '</b> kcal</span>' +
         '<span>이동거리 <b>' + w.km + '</b> km</span>' +
         '<span>총 시간 <b>250</b> 분</span>' +
+        '<span>완료 <b class="wkdone" data-week="' + w.no + '">' + weekCount(w) + '</b></span>' +
       '</div>' +
       '<div class="done-when" style="margin-top:.5rem"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
       '</div></div></section>';
 
     const cards = '<section class="grid">' + days.map(x => {
-      const rec = d.sessions[x.date] || {};
-      const state = rec.done ? '<span class="chip good">완료</span>'
-        : (x.date < today ? '<span class="chip warn">미기록</span>'
-        : (x.date === today ? '<span class="chip accent">오늘</span>' : ''));
       return '<div class="panel" data-span="4" id="' + x.id + '">' +
-        '<div class="ph"><h2>' + x.dow + '요일</h2><span class="label">' + x.date.slice(5).replace('-', '/') + '</span></div>' +
+        '<div class="ph"><h2>' + x.dow + '요일</h2>' +
+          '<span class="label">' + x.date.slice(5).replace('-', '/') + '</span>' + stateBtn(x) +
+        '</div>' +
         '<div class="pb">' +
         '<div class="dhead">' +
           '<span class="dd">' + x.id.toUpperCase() + '</span>' +
-          '<span class="dt">' + esc(x.theme) + '</span>' + state +
+          '<span class="dt">' + esc(x.theme) + '</span>' +
         '</div>' +
         '<div class="dhead" style="margin-bottom:.3rem">' +
           '<span class="chip mute">RPE ' + esc(x.rpe) + '</span>' +
@@ -183,6 +203,30 @@
     }).join('') + '</section>';
     return head + cards;
   }).join('');
+
+  /* 상태 버튼을 누르면 저장하고 화면의 상태 표시만 다시 그린다 */
+  $('weeks').addEventListener('click', e => {
+    const btn = e.target.closest('.dstate');
+    if (!btn || btn.disabled) return;
+    const date = btn.dataset.date;
+    const rec = d.sessions[date] || (d.sessions[date] = {});
+    rec.done = !rec.done;
+    if (!LOG.save(d)) { btn.disabled = true; btn.title = '저장하지 못했다'; return; }
+    redrawStates();
+  });
+
+  function redrawStates() {
+    for (const b of document.querySelectorAll('.dstate')) {
+      const x = P.days.find(v => v.date === b.dataset.date);
+      const st = stateOf(x);
+      b.dataset.state = st;
+      b.textContent = LABEL[st];
+      b.setAttribute('aria-pressed', st === 'done');
+    }
+    for (const el of document.querySelectorAll('.wkdone')) {
+      el.textContent = weekCount(P.weeks[+el.dataset.week - 1]);
+    }
+  }
 
   DB.refresh();
 })();

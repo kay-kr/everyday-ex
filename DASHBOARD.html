@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="_dashboard/dashboard.css">
+<link rel="stylesheet" href="_dashboard/overrides.css">
 <style>
 :root{--accent:#2E7D4F}
 .today-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
@@ -66,7 +67,7 @@
   <span class="badge">주 5회 × 50분</span>
   <p class="lede">퇴근 후 광명시민운동장에서 혼자, 축구공 하나로 50분. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
   <div class="meta">
-    <span>갱신 <b><time datetime="2026-09-14T15:30+09:00">2026-09-14 15:30 KST</time></b></span>
+    <span>갱신 <b><time datetime="2026-09-14T17:10+09:00">2026-09-14 17:10 KST</time></b></span>
     <span>기간 <b>2026-09-14 ~ 10-02 (15세션)</b></span>
     <span>장소 <b>광명시민운동장 인조잔디 · 3단 계단 · 그물 월 10m · 러닝트랙</b></span>
     <span>기준 <b>1973년생 · 170cm · 73~74kg · BMI 25.4</b></span>
@@ -78,7 +79,7 @@
   <div class="panel" data-span="12">
     <div class="tiles">
       <div class="tile"><span class="label">오늘</span><span class="v" id="kToday" style="font-size:1.05rem">—</span><span class="s" id="kTodaySub">—</span></div>
-      <div class="tile"><span class="label">완료 세션</span><span class="v num"><span id="kDone">0</span> / 15</span><span class="s" id="kDoneSub">기록 페이지에서 체크하면 채워진다</span><div class="meter"><i id="kDoneBar" style="width:0%"></i></div></div>
+      <div class="tile"><span class="label">완료 세션</span><span class="v num"><span id="kDone">0</span> / 15</span><span class="s" id="kDoneSub">오늘 카드나 루틴에서 눌러 체크한다</span><div class="meter"><i id="kDoneBar" style="width:0%"></i></div></div>
       <div class="tile"><span class="label">무릎 NRS 평균</span><span class="v num" id="kNrs">—</span><span class="s" id="kNrsSub">3 이하면 계획대로 증량</span></div>
       <div class="tile"><span class="label">체중</span><span class="v num" id="kW">—</span><span class="s" id="kWSub">시작 73.5kg 기준</span></div>
       <div class="tile"><span class="label">누적 이동거리</span><span class="v num" id="kKm">—</span><span class="s">걷기 포함 · km</span></div>
@@ -223,6 +224,8 @@
     <div class="ph"><h2>변경 이력</h2></div>
     <div class="pb">
       <ul class="history">
+        <li><time datetime="2026-09-14T17:10+09:00">09-14 17:10</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
+        <li><time datetime="2026-09-14T16:40+09:00">09-14 16:40</time><span>GitHub Pages 게시 준비(.nojekyll · index.html) · 표 툴팁 잘림과 터치 툴팁 수정</span></li>
         <li><time datetime="2026-09-14T15:30+09:00">09-14 15:30</time><span>나이를 1973년생(만 53세)로 확정해 심박 구간 재계산 · 동작 사전 50가지 추가</span></li>
         <li><time datetime="2026-09-14T12:00+09:00">09-14 12:00</time><span>3주 플랜 확정, 대시보드·루틴·무릎 관리·기록 페이지 생성</span></li>
       </ul>
@@ -255,6 +258,20 @@
   const esc = DB.esc;
   const md = (s, n) => s == null ? '—' : (+s).toFixed(n);
 
+  /* ── 완료 여부 버튼. 기록 페이지와 같은 저장소를 본다 ── */
+  const canSave = LOG.available();
+  const LABEL = { done: '완료', today: '오늘', missed: '미기록', todo: '예정' };
+  const stateOf = x => (d.sessions[x.date] || {}).done ? 'done'
+    : x.date === st.today ? 'today'
+    : x.date < st.today ? 'missed' : 'todo';
+  const todayStateBtn = x => {
+    const s = stateOf(x);
+    return '<button class="dstate" type="button" id="todayState" data-date="' + x.date + '" data-state="' + s + '"' +
+      ' aria-pressed="' + (s === 'done') + '"' +
+      (canSave ? ' title="눌러서 완료 여부를 바꾼다"' : ' disabled title="이 브라우저는 저장을 막고 있어 바꿀 수 없다"') +
+      '>' + LABEL[s] + '</button>';
+  };
+
   /* ── 오늘 세션 카드 ── */
   const day = st.todayDay || st.nextDay;
   const box = $('todayBox');
@@ -274,6 +291,7 @@
         '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
         '<span class="chip mute">약 ' + day.kcal + ' kcal</span>' +
         '<span class="chip mute">' + day.km.toFixed(1) + ' km</span>' +
+        todayStateBtn(day) +
       '</div>' +
       '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
       day.blocks.map(b =>
@@ -401,6 +419,16 @@
   } else {
     src.querySelector('.txt').textContent = '기록 없음 · 계획만 표시';
   }
+
+  /* 완료 여부를 바꾸면 지표 · 단계 · 표가 모두 달라지므로 다시 읽어 그린다 */
+  $('todayState')?.addEventListener('click', e => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    const rec = d.sessions[btn.dataset.date] || (d.sessions[btn.dataset.date] = {});
+    rec.done = !rec.done;
+    if (!LOG.save(d)) { btn.disabled = true; btn.title = '저장하지 못했다'; return; }
+    location.reload();
+  });
 
   DB.conversations('convRecent', null, window.DB_CONVERSATIONS, { limit: 5 });
   DB.refresh();

@@ -1,0 +1,63 @@
+/* 이 프로젝트에서만 더하는 규칙. dashboard.css 는 공용이라 고치지 않고 여기에 쌓는다.
+   반드시 dashboard.css 다음에 읽혀야 한다. */
+
+/* ── 1. 표 안의 툴팁이 잘리는 문제 ──
+   .tbl-wrap 은 가로 스크롤 상자다(overflow-x:auto). CSS 규칙상 한 축이 auto 면
+   나머지 축의 visible 도 auto 로 계산되어, 세로로 삐져나온 것도 같이 잘린다.
+   툴팁은 기본적으로 대상의 '위쪽'에 뜨는데 머리글은 상자의 맨 위라 통째로 가려졌다.
+   → 머리글과 첫 두 행만 아래쪽으로 뒤집는다. 아래는 표 안쪽이라 잘리지 않는다. */
+.tbl-wrap thead [data-def]::after,
+.tbl-wrap tbody tr:nth-child(-n+2) [data-def]::after {
+  bottom: auto;
+  top: calc(100% + .45rem);
+  left: 0;
+  transform: none;
+  max-width: min(18rem, 70vw);
+}
+.tbl-wrap thead [data-def]::before,
+.tbl-wrap tbody tr:nth-child(-n+2) [data-def]::before {
+  bottom: auto;
+  top: calc(100% + .15rem);
+  border-top-color: transparent;
+  border-bottom: .32rem solid var(--tip-bg);
+  border-top: 0;
+}
+
+/* ── 2. 휴대폰에서도 툴팁이 뜨게 ──
+   원래 규칙은 :focus-visible 이라 키보드로 이동했을 때만 뜬다.
+   터치는 focus-visible 을 일으키지 않아 아무리 눌러도 보이지 않았다.
+   dashboard.js 가 모든 툴팁 요소에 tabindex 를 달아 두므로, :focus 를 더하면 탭에도 뜬다. */
+[data-def]:focus::after,
+[data-def]:focus::before { opacity: 1 }
+
+/* 터치로 눌렀을 때 초점 테두리가 거슬리지 않게 — 키보드 이동일 때만 테두리를 보인다 */
+.term:focus:not(:focus-visible) { outline: none }
+
+/* ── 3. 세션 완료 여부 버튼 ──
+   각 날 프로그램 옆에 붙는다. 누르면 기록 페이지와 같은 저장소에 바로 반영된다.
+   상태: done 완료 / today 오늘 / missed 미기록(지난 날인데 체크 안 됨) / todo 예정 */
+.dstate {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font: 600 .7rem/1 var(--sans);
+  letter-spacing: -.01em;
+  padding: .26rem .55rem .26rem .42rem;
+  border: 1px solid var(--line-2);
+  border-radius: 99px;
+  background: var(--surface-2);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dstate::before { content: "○"; font-family: var(--mono); font-size: .9em; line-height: 1 }
+.dstate[data-state="done"] { background: var(--good-soft); color: var(--good); border-color: transparent }
+.dstate[data-state="done"]::before { content: "●" }
+.dstate[data-state="today"] { background: var(--accent-soft); color: var(--accent); border-color: transparent }
+.dstate[data-state="missed"] { background: var(--warn-soft); color: var(--warn); border-color: transparent }
+.dstate:hover:not(:disabled) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft) }
+.dstate:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.dstate:disabled { cursor: not-allowed; opacity: .55 }
+
+/* 패널 머리글 안에서는 날짜 오른쪽에 붙는다 (.ph .label 이 margin-left:auto 라 오른쪽으로 밀린다) */
+.ph .dstate { margin-left: .1rem; align-self: center }
