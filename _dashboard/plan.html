@@ -57,7 +57,7 @@
   <h1>3주 루틴 전체</h1>
   <span class="badge">15세션 · 각 50분</span>
   <p class="lede">2026년 9월 14일부터 10월 2일까지, 평일 저녁 15개 세션의 전 내용이다. 요일마다 성격이 고정되어 있고 주차가 올라갈수록 같은 요일의 양이 늘어난다. 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 세션 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
-  <div class="meta"><span>갱신 <b><time datetime="2026-09-14T17:10+09:00">2026-09-14 17:10 KST</time></b></span></div>
+  <div class="meta"><span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span></div>
 </header>
 
 <!-- ── 요일 설계 · 공통 루틴 ── -->
@@ -129,12 +129,14 @@
 <script src="moves.js"></script>
 <script src="plandata.js"></script>
 <script src="store.js"></script>
+<script src="session.js"></script>
 <script src="dashboard.js"></script>
 <script>
 (function () {
   const P = window.DB_PLAN, LOG = window.EXLOG, esc = DB.esc, $ = id => document.getElementById(id);
   const d = LOG.load(), today = LOG.todayKey();
   const canSave = LOG.available();
+  const SES = window.DB_SESSION;
 
   /* ── 완료 여부 ──
      상태는 기록 페이지와 같은 저장소를 본다. 여기서 누르면 거기에도 바로 반영된다. */
@@ -192,10 +194,8 @@
           '<span class="chip mute">50분</span>' +
         '</div>' +
         '<p class="hl">' + esc(x.headline) + '</p>' +
-        x.blocks.map(b =>
-          '<div class="blk' + (/메인|테스트|신규/.test(b.name) ? ' main' : '') + '">' +
-          '<b>' + esc(b.name) + '<span class="m">' + b.min + '분</span></b>' +
-          '<ul>' + b.items.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul></div>').join('') +
+        SES.progressHTML(x, d.sessions[x.date], { readonly: !canSave }) +
+        SES.blocksHTML(x, d.sessions[x.date], { readonly: !canSave }) +
         '<div class="banlist"><span class="label">금지</span>' +
           x.ban.map(v => '<span class="chip">' + esc(v) + '</span>').join('') + '</div>' +
         window.DB_MOVES_PANEL(x, '') +
@@ -214,6 +214,19 @@
     if (!LOG.save(d)) { btn.disabled = true; btn.title = '저장하지 못했다'; return; }
     redrawStates();
   });
+
+  /* 카드마다 체크리스트를 연결한다. 그 카드 안의 진행 표시만 갱신하고 전체를 다시 그리지 않는다. */
+  if (canSave) {
+    for (const x of P.days) {
+      const card = document.getElementById(x.id);
+      if (!card) continue;
+      SES.wire(card, x, () => d.sessions[x.date] || (d.sessions[x.date] = {}), (rec) => {
+        if (!LOG.save(d)) return;
+        SES.sync(card, x, rec);
+        redrawStates();
+      });
+    }
+  }
 
   function redrawStates() {
     for (const b of document.querySelectorAll('.dstate')) {

@@ -1,6 +1,9 @@
 /* 3주 트레이닝 플랜 원본 데이터. DASHBOARD.html 과 plan.html 이 함께 읽는다.
    수정은 여기 한 곳에서만 한다. 날짜는 모두 KST. */
 window.DB_PLAN = {
+  /* 모든 페이지 머리말의 "갱신" 표시가 이 값을 쓴다. 손으로 고치는 곳은 여기 한 곳뿐이다. */
+  updated: "2026-09-14T16:50+09:00",
+
   profile: {
     birthYear: 1973,
     age: 53,           // 만 나이. 바꾸면 hrmax 와 zones 의 bpm 을 함께 다시 계산한다.
@@ -340,3 +343,17 @@ window.DB_PLAN = {
     { k: "야식", v: "21시 이후 고형식 중단", why: "저녁 운동 후 수면의 질을 지킨다" },
   ],
 };
+
+/* 모든 페이지 머리말의 <time id="dbUpdated"> 를 위의 updated 값으로 채운다.
+   페이지마다 날짜를 손으로 적으면 서로 어긋나므로 여기서 한 번에 처리한다. */
+(function () {
+  function fill() {
+    var el = document.getElementById('dbUpdated');
+    if (!el || !window.DB_PLAN) return;
+    var v = window.DB_PLAN.updated;
+    el.setAttribute('datetime', v);
+    el.textContent = (window.DB && DB.kst) ? DB.kst(v) : v;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill);
+  else fill();
+})();

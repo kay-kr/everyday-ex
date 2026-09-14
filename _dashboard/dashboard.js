@@ -24,7 +24,7 @@ window.DB=(function(){
 
   /* ── KST 시각. 입력에 시간대가 없으면 KST 로 간주한다. ── */
   const KST=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-  function parseKst(v){if(typeof v==='number')return new Date(v);let s=String(v).trim();if(!/([zZ]|[+-]\d{2}:?\d{2})$/.test(s))s=s.replace(' ','T')+'+09:00';return new Date(s);}
+  function parseKst(v){if(typeof v==='number')return new Date(v);let s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}$/.test(s))s+='T00:00';if(!/([zZ]|[+-]\d{2}:?\d{2})$/.test(s))s=s.replace(' ','T')+'+09:00';return new Date(s);}
   function kst(v,withSec=false){
     const d=parseKst(v);if(isNaN(d))return '—';
     const p=Object.fromEntries(KST.formatToParts(d).map(x=>[x.type,x.value]));
@@ -92,7 +92,9 @@ window.DB=(function(){
     const terms=new Map(),refs=new Map();
     document.querySelectorAll('.term').forEach(t=>{const k=t.textContent.trim();if(!terms.has(k))terms.set(k,{def:t.dataset.def||'',en:t.dataset.en||''});});
     document.querySelectorAll('.ref').forEach(t=>{const k=t.textContent.trim();if(!refs.has(k))refs.set(k,{def:t.dataset.def||'',href:t.getAttribute('href')||''});});
-    if(sec&&!terms.size&&!refs.size){sec.remove();return;}
+    /* 아직 용어가 없을 때는 숨기기만 한다. 지워 버리면 나중에 동적으로 그린 내용에 용어가 생겨도 되살릴 수 없다. */
+    if(sec&&!terms.size&&!refs.size){sec.style.display='none';if(list)list.innerHTML='';return;}
+    if(sec)sec.style.display='';
     if(!list)return;list.innerHTML='';
     const group=(title,map,isRef)=>{
       if(!map.size)return;

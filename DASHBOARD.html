@@ -67,7 +67,7 @@
   <span class="badge">주 5회 × 50분</span>
   <p class="lede">퇴근 후 광명시민운동장에서 혼자, 축구공 하나로 50분. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
   <div class="meta">
-    <span>갱신 <b><time datetime="2026-09-14T17:10+09:00">2026-09-14 17:10 KST</time></b></span>
+    <span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span>
     <span>기간 <b>2026-09-14 ~ 10-02 (15세션)</b></span>
     <span>장소 <b>광명시민운동장 인조잔디 · 3단 계단 · 그물 월 10m · 러닝트랙</b></span>
     <span>기준 <b>1973년생 · 170cm · 73~74kg · BMI 25.4</b></span>
@@ -224,10 +224,11 @@
     <div class="ph"><h2>변경 이력</h2></div>
     <div class="pb">
       <ul class="history">
-        <li><time datetime="2026-09-14T17:10+09:00">09-14 17:10</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
-        <li><time datetime="2026-09-14T16:40+09:00">09-14 16:40</time><span>GitHub Pages 게시 준비(.nojekyll · index.html) · 표 툴팁 잘림과 터치 툴팁 수정</span></li>
-        <li><time datetime="2026-09-14T15:30+09:00">09-14 15:30</time><span>나이를 1973년생(만 53세)로 확정해 심박 구간 재계산 · 동작 사전 50가지 추가</span></li>
-        <li><time datetime="2026-09-14T12:00+09:00">09-14 12:00</time><span>3주 플랜 확정, 대시보드·루틴·무릎 관리·기록 페이지 생성</span></li>
+        <li><time datetime="2026-09-14T16:50+09:00">09-14 16:50</time><span>오늘 카드 날짜가 안 나오던 오류 수정 · 세션 항목별 체크리스트 추가 · 갱신 시각을 실제 시각으로</span></li>
+        <li><time datetime="2026-09-14T16:05+09:00">09-14 16:05</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
+        <li><time datetime="2026-09-14T15:55+09:00">09-14 15:55</time><span>GitHub Pages 게시 준비(.nojekyll · index.html) · 표 툴팁 잘림과 터치 툴팁 수정</span></li>
+        <li><time datetime="2026-09-14T14:20+09:00">09-14 14:20</time><span>나이를 1973년생(만 53세)로 확정해 심박 구간 재계산 · 동작 사전 50가지 추가</span></li>
+        <li><time datetime="2026-09-14T12:05+09:00">09-14 12:05</time><span>3주 플랜 확정, 대시보드·루틴·무릎 관리·기록 페이지 생성</span></li>
       </ul>
     </div>
   </div>
@@ -248,6 +249,7 @@
 <script src="_dashboard/moves.js"></script>
 <script src="_dashboard/plandata.js"></script>
 <script src="_dashboard/store.js"></script>
+<script src="_dashboard/session.js"></script>
 <script src="_dashboard/conversations.js"></script>
 <script src="_dashboard/dashboard.js"></script>
 <script>
@@ -282,10 +284,12 @@
   } else {
     const isToday = !!st.todayDay;
     const rest = !isToday ? '<span class="chip warn">오늘은 계획된 세션이 없다 — 아래는 다음 세션이다</span>' : '';
+    const rec = d.sessions[day.date] || (d.sessions[day.date] = {});
+    const SES = window.DB_SESSION;
     box.innerHTML =
       rest +
       '<div class="today-head">' +
-        '<span class="dnum">' + DB.fmt(day.date, 'kstdate').slice(5) + ' (' + day.dow + ')</span>' +
+        '<span class="dnum">' + day.date.slice(5).replace('-', '/') + ' (' + day.dow + ')</span>' +
         '<span class="dtheme">' + esc(day.theme) + '</span>' +
         '<span class="chip accent">' + day.week + '주차 · ' + day.id.toUpperCase() + '</span>' +
         '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
@@ -294,14 +298,27 @@
         todayStateBtn(day) +
       '</div>' +
       '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
-      day.blocks.map(b =>
-        '<div class="blk' + (/메인|테스트|신규/.test(b.name) ? ' main' : '') + '">' +
-        '<b>' + esc(b.name) + '<span class="m">' + b.min + '분</span></b>' +
-        '<ul>' + b.items.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul></div>'
-      ).join('') +
+      SES.progressHTML(day, rec, { readonly: !canSave }) +
+      SES.blocksHTML(day, rec, { readonly: !canSave }) +
       '<div class="banlist"><span class="label" style="align-self:center">오늘 하지 않는 것</span>' +
         day.ban.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div>' +
       window.DB_MOVES_PANEL(day, '_dashboard/');
+
+    /* 항목을 누르면 저장하고 화면의 진행 표시만 갱신한다. 다 끝내면 완료 버튼도 같이 바뀐다. */
+    if (canSave) {
+      SES.wire(box, day, () => rec, (r, p) => {
+        if (!LOG.save(d)) return;
+        SES.sync(box, day, r);
+        const btn = $('todayState');
+        if (btn) {
+          const s2 = stateOf(day);
+          btn.dataset.state = s2;
+          btn.textContent = LABEL[s2];
+          btn.setAttribute('aria-pressed', s2 === 'done');
+        }
+        $('kDone').textContent = LOG.stats(d, P).doneCount;
+      });
+    }
 
     $('kToday').textContent = isToday ? day.theme : '휴식';
     $('kTodaySub').textContent = isToday

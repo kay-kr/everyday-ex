@@ -61,3 +61,46 @@
 
 /* 패널 머리글 안에서는 날짜 오른쪽에 붙는다 (.ph .label 이 margin-left:auto 라 오른쪽으로 밀린다) */
 .ph .dstate { margin-left: .1rem; align-self: center }
+
+/* ── 4. 세션 체크리스트 ──
+   운동하면서 항목을 하나씩 눌러 지워 나가기 위한 것. 손가락으로 누르므로 줄 전체가 대상이다. */
+.sprog { display: flex; align-items: center; gap: .55rem; margin: .1rem 0 .5rem }
+.sbar {
+  flex: 1; height: .45rem; min-width: 4rem;
+  background: var(--surface-2); border-radius: 99px; overflow: hidden;
+}
+.sbar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .18s ease }
+.sprog[data-all] .sbar i { background: var(--good) }
+.spct { font: 600 .78rem var(--mono); color: var(--ink-2); white-space: nowrap }
+.sprog[data-all] .spct { color: var(--good) }
+.sreset {
+  font: 500 .72rem var(--sans); background: none; color: var(--muted);
+  border: 1px solid var(--line-2); border-radius: 4px; padding: .12rem .4rem; cursor: pointer;
+}
+.sreset:hover { border-color: var(--bad); color: var(--bad) }
+
+.checklist { list-style: none; margin: .25rem 0 0; padding: 0 }
+.checklist li.ck {
+  display: flex; align-items: flex-start; gap: .5rem;
+  padding: .3rem .35rem; margin: .05rem 0;
+  border-radius: 5px; cursor: pointer;
+  color: var(--ink-2); font-size: .9rem; line-height: 1.5;
+}
+.checklist li.ck:hover { background: var(--surface-2) }
+.checklist li.ck input {
+  flex: none; width: 1.1rem; height: 1.1rem; margin: .16rem 0 0;
+  accent-color: var(--accent); cursor: pointer;
+}
+.checklist li.ck.on .tx { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px }
+
+/* 블록별 진척 — 제목 오른쪽에 3/4 처럼 */
+.blk > b { display: flex; align-items: baseline; gap: .35rem }
+.blk .bn { margin-left: auto; font: 600 .72rem var(--mono); color: var(--muted); flex: none }
+.blk.bdone { border-left-color: var(--good) }
+.blk.bdone > b, .blk.bdone .bn { color: var(--good) }
+
+/* 좁은 화면에서는 줄 간격을 조금 더 벌려 누르기 쉽게 */
+@media (max-width: 760px) {
+  .checklist li.ck { padding: .45rem .35rem; font-size: .92rem }
+  .checklist li.ck input { width: 1.25rem; height: 1.25rem }
+}
