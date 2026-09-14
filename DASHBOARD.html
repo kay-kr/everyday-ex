@@ -64,12 +64,12 @@
   <h1>평일 저녁 축구 트레이닝 · 3주</h1>
   <span class="badge" data-state="진행 중">진행 중</span>
   <span class="badge accent" id="hdWeek">1주차</span>
-  <span class="badge">주 5회 × 50분</span>
-  <p class="lede">퇴근 후 광명시민운동장에서 혼자, 축구공 하나로 50분. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
+  <span class="badge">주 5회 · 평일 50분 + 수 레슨</span>
+  <p class="lede">월 · 화 · 목 · 금은 퇴근 후 광명시민운동장에서 혼자 50분, 수요일은 클럽 축구 레슨이다. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
   <div class="meta">
     <span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span>
     <span>기간 <b>2026-09-14 ~ 10-02 (15세션)</b></span>
-    <span>장소 <b>광명시민운동장 인조잔디 · 3단 계단 · 그물 월 10m · 러닝트랙</b></span>
+    <span>장소 <b>광명시민운동장 (월·화·목·금) · 클럽 레슨장 (수)</b></span>
     <span>기준 <b>1973년생 · 170cm · 73~74kg · BMI 25.4</b></span>
   </div>
 </header>
@@ -99,11 +99,12 @@
     <div class="pb">
       <span class="label">현재 단계</span>
       <p style="font-weight:600;font-size:1.1rem;margin:.15rem 0 .2rem" id="nowStage">S1 · 적응주</p>
-      <p style="color:var(--ink-2)" id="nowText">이번 주는 기록을 모으는 주간이다. 무릎이 어디까지 견디는지 숫자로 확인하는 것이 유산소 성과보다 우선한다. S1의 통과 조건을 넘겨야 S2에서 인터벌과 슛을 넣는다.</p>
+      <p style="color:var(--ink-2)" id="nowText">이번 주는 기록을 모으는 주간이다. 무릎이 어디까지 견디는지 숫자로 확인하는 것이 유산소 성과보다 우선한다. S1의 통과 조건을 넘겨야 S2에서 컷팅과 슛을 넣는다. 수요일 레슨은 이번 주부터 바로 복귀한다 — 다만 숏게임은 한 판만 한다.</p>
       <span class="label" style="display:block;margin-top:.7rem">다음 할 일</span>
       <ol class="next" style="margin-top:.3rem">
         <li>오늘 세션을 마치고 <a data-page="_dashboard/log.html">기록</a>에 NRS · RPE · 거리를 입력한다</li>
         <li>내일 아침 무릎 통증을 한 번 더 적는다 — 전날보다 높으면 강도를 30% 내린다</li>
+        <li>수요일 레슨은 15분 일찍 도착해 혼자 워밍업을 끝내 놓는다</li>
         <li>금요일에 연속 조깅 8분 거리를 재서 3주차 T1의 기준선을 만든다</li>
       </ol>
       <div class="blocked-note" style="margin-top:.7rem"><b>주의</b>계단 내려가기는 3주 내내 금지다. 슬개대퇴통증에서 가장 확실한 통증 유발 동작이라 R1로 따로 관리한다.</div>
@@ -127,10 +128,11 @@
         <dt>D1</dt><dd>유산소 우선, 근력은 보조<small>목표가 체중 감량과 기초 체력이라 시간의 절반 이상을 유산소에 쓴다. 다만 둔근 근력은 무릎을 지키는 장치라 매주 넣는다.</small></dd>
         <dt>D2</dt><dd>1주차는 워크-런<small>10분 조깅은 되지만 주 5일 연속 부하는 다른 문제다. 걷기를 끼워 총량을 늘리고 관절 충격을 낮춘다.</small></dd>
         <dt>D3</dt><dd>계단 내려가기 3주 금지<small>통증이 정확히 그 동작에서 나온다. 편심 부하를 없애는 것이 이번 3주의 제1 안전선이다.</small></dd>
-        <dt>D4</dt><dd>슛은 2주차부터 60%→75%<small>오른발로 찰 때 왼쪽이 지지발이 되어 비틀림을 받는다. 횟수와 강도를 모두 묶었다.</small></dd>
+        <dt>D4</dt><dd>슛은 레슨 안에서만, 60%→75%<small>오른발로 찰 때 왼쪽이 지지발이 되어 비틀림을 받는다. 수요일 레슨의 마무리 슛으로만 하고, 1회차는 인사이드, 2회차 인스텝 60%, 3회차 75%까지 올린다.</small></dd>
         <dt>D5</dt><dd>심박 구간은 만 53세 기준<small>1973년생 · HRmax 171로 계산했다. 나이가 한 살 오르면 plandata.js 의 age·hrmax·zones 를 함께 고친다.</small></dd>
         <dt>D6</dt><dd>식단은 건드리지 않음<small>본인이 선택한 방식이다. 대신 되돌리기 쉬운 3가지만 권장으로 둔다.</small></dd>
-        <dt>D7</dt><dd>주 5일 × 50분 고정<small>주말은 회복. 생활축구 경기를 뛴 주는 월요일 강도를 한 단계 내린다.</small></dd>
+        <dt>D7</dt><dd>주 5일 고정<small>주말은 회복. 생활축구 경기를 뛴 주는 월요일 강도를 한 단계 내린다.</small></dd>
+        <dt>D8</dt><dd>수요일은 축구 레슨으로 대체<small>무릎 때문에 빠져 있던 클럽 레슨에 복귀한다. 혼자 하던 인터벌·슛 블록은 레슨의 론도와 숏게임이 대신하므로 따로 넣지 않는다. 대신 강도를 내가 정할 수 없는 만큼 빠질 기준을 미리 정해 뒀다 — R7.</small></dd>
       </dl>
     </div>
   </div>
@@ -144,6 +146,7 @@
         <li>R4 · 오른발 슛이 오히려 왼쪽 지지발에 부하를 준다. 슛 횟수를 양발 모두 제한한다.</li>
         <li>R5 · 저녁 고강도는 수면을 방해한다. 수요일·금요일은 취침 3시간 전 종료.</li>
         <li>R6 · 야간 단독 운동. 휴대폰을 지참하고 조명이 있는 구역에서만 한다.</li>
+        <li>R7 · 수요일 레슨은 강도를 내가 정하지 못한다. 숏게임 판수 상한(1회차 1판 → 2회차부터 남은 시간)과 "삐끗하면 그 자리에서 빠진다"를 미리 정해 두고, 다음날 아침 NRS로 판정한다.</li>
       </ul>
     </div>
   </div>
@@ -154,7 +157,7 @@
   <div class="panel" data-span="6">
     <div class="ph"><h2>일별 예상 소모</h2><span class="label">kcal · 73.5kg 기준 추정</span></div>
     <div class="pb tight"><div class="chart"><canvas id="chartLoad"></canvas></div></div>
-    <div class="pf"><span>1주차 <b>1,670</b></span><span>2주차 <b>1,890</b></span><span>3주차 <b>2,070</b></span><span>합계 <b>5,630 kcal</b></span></div>
+    <div class="pf" id="kcalFoot"></div>
   </div>
   <div class="panel" data-span="6">
     <div class="ph"><h2>15세션 한눈에</h2><span class="label" id="tblLabel">—</span></div>
@@ -224,6 +227,7 @@
     <div class="ph"><h2>변경 이력</h2></div>
     <div class="pb">
       <ul class="history">
+        <li><time datetime="2026-09-14T17:40+09:00">09-14 17:40</time><span>수요일을 축구 레슨으로 대체 (D8 · R7) · 날짜별 준비물 표시 · 블록마다 쉬는 법 명시 · 설명줄에서 체크박스 제거 · 묶음 이름 툴팁 추가</span></li>
         <li><time datetime="2026-09-14T16:50+09:00">09-14 16:50</time><span>오늘 카드 날짜가 안 나오던 오류 수정 · 세션 항목별 체크리스트 추가 · 갱신 시각을 실제 시각으로</span></li>
         <li><time datetime="2026-09-14T16:05+09:00">09-14 16:05</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
         <li><time datetime="2026-09-14T15:55+09:00">09-14 15:55</time><span>GitHub Pages 게시 준비(.nojekyll · index.html) · 표 툴팁 잘림과 터치 툴팁 수정</span></li>
@@ -295,9 +299,11 @@
         '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
         '<span class="chip mute">약 ' + day.kcal + ' kcal</span>' +
         '<span class="chip mute">' + day.km.toFixed(1) + ' km</span>' +
+        '<span class="chip mute">' + window.DB_DAY_MIN(day) + '분</span>' +
         todayStateBtn(day) +
       '</div>' +
       '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
+      SES.gearHTML(day, P.fixed) +
       SES.progressHTML(day, rec, { readonly: !canSave }) +
       SES.blocksHTML(day, rec, { readonly: !canSave }) +
       '<div class="banlist"><span class="label" style="align-self:center">오늘 하지 않는 것</span>' +
@@ -415,6 +421,14 @@
     { key: 'state', label: '상태', chip: { 완료: 'good', 미기록: 'warn', 예정: 'mute' } },
   ]);
   $('tblLabel').textContent = st.doneCount + ' / 15 완료';
+
+  /* 주차별 예상 소모 — plandata 의 값이 바뀌면 여기도 따라 바뀐다 */
+  (function () {
+    const ws = P.weeks.filter(w => w.sessions);
+    const sum = ws.reduce((a, w) => a + w.kcal, 0);
+    $('kcalFoot').innerHTML = ws.map(w => '<span>' + w.no + '주차 <b>' + w.kcal.toLocaleString() + '</b></span>').join('') +
+      '<span>합계 <b>' + sum.toLocaleString() + ' kcal</b></span>';
+  })();
 
   /* ── 심박 구간 · 식단 ── */
   $('zoneBox').innerHTML = P.zones.map(z =>

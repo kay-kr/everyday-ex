@@ -104,3 +104,48 @@
   .checklist li.ck { padding: .45rem .35rem; font-size: .92rem }
   .checklist li.ck input { width: 1.25rem; height: 1.25rem }
 }
+
+/* ── 5. 준비물 ──
+   날짜마다 무엇을 챙겨 나가야 하는지 카드 위쪽에서 바로 보이게 한다.
+   회색 = 매일 챙기는 것(plandata 의 fixed.gearAlways), 초록 = 그날만 챙기는 것(days[].gear). */
+.gearbox {
+  display: flex; flex-wrap: wrap; gap: .3rem; align-items: center;
+  margin: .35rem 0 .5rem; padding: .4rem .5rem;
+  border: 1px dashed var(--line-2); border-radius: 6px;
+}
+.gearbox .label { margin-right: .15rem }
+/* 준비물 이름은 한글 낱말이라 기본 .chip(.62rem · 자간 .1em)으로는 읽기 어렵다. 여기서만 키운다. */
+.gearbox .chip {
+  font-family: var(--sans); font-size: .78rem; font-weight: 500;
+  letter-spacing: 0; padding: .14rem .45rem;
+}
+
+/* ── 6. 블록 안의 설명줄과 '쉬는 법' ──
+   체크박스가 붙는 것은 items 뿐이다. 아래 둘은 읽는 것이지 지워 나가는 것이 아니므로
+   체크박스 없이, 글자도 한 단계 작게 둔다. */
+.blk > b .bname { flex: 0 1 auto; min-width: 0 }
+
+/* 선택자에 .blk 를 붙여 둔 이유 — 각 페이지의 .blk ul 규칙이 색과 크기를 먼저 잡고 있어서
+   .blknotes 만으로는 이기지 못한다. */
+.blk .blknotes {
+  list-style: none; margin: .15rem 0 0; padding: 0;
+  color: var(--muted); font-size: .82rem; line-height: 1.5;
+}
+.blk .blknotes li { position: relative; padding-left: .75rem; margin: .1rem 0 }
+.blk .blknotes li::before {
+  content: "—"; position: absolute; left: 0; color: var(--line-2);
+}
+
+.blkrest {
+  margin: .35rem 0 0; padding: .3rem .5rem;
+  background: var(--surface-2); border-radius: 5px;
+  color: var(--ink-2); font-size: .84rem; line-height: 1.5;
+}
+.blkrest > b {
+  font: 600 .62rem var(--mono); letter-spacing: .08em;
+  color: var(--muted); margin-right: .4rem; text-transform: uppercase;
+}
+
+/* 각 페이지의 .blk ul 규칙(padding-left 1.05rem)이 체크리스트와 설명줄까지 들여쓰고 있었다.
+   체크박스가 이미 왼쪽 여백 역할을 하므로 여기서만 되돌린다. */
+.blk .checklist, .blk .blknotes { padding-left: 0 }

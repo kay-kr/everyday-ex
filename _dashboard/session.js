@@ -12,7 +12,7 @@ window.DB_SESSION = (function () {
   'use strict';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const key = (bi, ii) => bi + '-' + ii;
-  const isMain = name => /메인|테스트|신규/.test(name);
+  const isMain = name => /메인|테스트|신규|레슨/.test(name);
 
   const total = day => day.blocks.reduce((a, b) => a + b.items.length, 0);
 
@@ -35,15 +35,29 @@ window.DB_SESSION = (function () {
       '</div>';
   }
 
-  /* 체크박스가 달린 블록 목록 */
+  /* 준비물. 매일 챙기는 것은 회색, 그날만 챙기는 것은 초록으로 구분한다. */
+  function gearHTML(day, fixed) {
+    const always = (fixed && fixed.gearAlways) || [];
+    const extra = day.gear || [];
+    if (!always.length && !extra.length) return '';
+    return '<div class="gearbox"><span class="label">준비물</span>' +
+      always.map(g => '<span class="chip mute">' + esc(g) + '</span>').join('') +
+      extra.map(g => '<span class="chip accent">' + esc(g) + '</span>').join('') +
+      '</div>';
+  }
+
+  /* 체크박스가 달린 블록 목록.
+     items 만 체크 대상이다. notes(설명·규칙)와 rest(쉬는 법)에는 체크박스를 달지 않는다 —
+     "3개 중 실제로 할 것은 1개" 같은 혼동을 없애기 위해서다. */
   function blocksHTML(day, rec, opts) {
     const s = (rec && rec.steps) || {};
     const ro = opts && opts.readonly;
     return day.blocks.map((b, bi) => {
       const dn = b.items.filter((_, ii) => s[key(bi, ii)]).length;
       const full = dn === b.items.length;
+      const notes = (b.notes || []).map(n => '<li>' + esc(n) + '</li>').join('');
       return '<div class="blk' + (isMain(b.name) ? ' main' : '') + (full ? ' bdone' : '') + '">' +
-        '<b>' + esc(b.name) + '<span class="m">' + b.min + '분</span>' +
+        '<b><span class="bname">' + esc(b.name) + '</span><span class="m">' + b.min + '분</span>' +
         '<span class="bn">' + dn + '/' + b.items.length + '</span></b>' +
         '<ul class="checklist">' + b.items.map((it, ii) => {
           const k = key(bi, ii), on = !!s[k];
@@ -51,7 +65,10 @@ window.DB_SESSION = (function () {
             '<input type="checkbox" data-k="' + k + '"' + (on ? ' checked' : '') + (ro ? ' disabled' : '') +
             ' aria-label="' + esc(it).slice(0, 60) + '">' +
             '<span class="tx">' + esc(it) + '</span></li>';
-        }).join('') + '</ul></div>';
+        }).join('') + '</ul>' +
+        (notes ? '<ul class="blknotes">' + notes + '</ul>' : '') +
+        (b.rest ? '<p class="blkrest"><b>쉬는 법</b>' + esc(b.rest) + '</p>' : '') +
+        '</div>';
     }).join('');
   }
 
@@ -106,5 +123,5 @@ window.DB_SESSION = (function () {
     return p;
   }
 
-  return { key, total, progress, progressHTML, blocksHTML, wire, sync };
+  return { key, total, progress, progressHTML, blocksHTML, gearHTML, wire, sync };
 })();

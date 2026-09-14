@@ -55,8 +55,8 @@
 
 <header class="top">
   <h1>3주 루틴 전체</h1>
-  <span class="badge">15세션 · 각 50분</span>
-  <p class="lede">2026년 9월 14일부터 10월 2일까지, 평일 저녁 15개 세션의 전 내용이다. 요일마다 성격이 고정되어 있고 주차가 올라갈수록 같은 요일의 양이 늘어난다. 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 세션 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
+  <span class="badge">15세션 · 평일 50분 + 수요일 레슨</span>
+  <p class="lede">2026년 9월 14일부터 10월 2일까지, 평일 저녁 15개 세션의 전 내용이다. 요일마다 성격이 고정되어 있고 주차가 올라갈수록 같은 요일의 양이 늘어난다. 수요일은 혼자 하는 운동이 아니라 클럽 축구 레슨이다 (D8). 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 세션 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
   <div class="meta"><span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span></div>
 </header>
 
@@ -68,8 +68,8 @@
       <dl class="kv">
         <dt>월</dt><dd>리셋 &amp; Zone2<small>주말을 지나고 다시 시동을 거는 날. 유산소 위주에 볼 감각을 얹는다. 무릎 부담이 가장 낮다.</small></dd>
         <dt>화</dt><dd>근력 &amp; 무릎 재건<small>둔근과 대퇴사두근을 만드는 날. 달리기는 거의 없고 계단 벽으로 패스를 한다.</small></dd>
-        <dt>수</dt><dd>유산소 메인<small>그 주의 칼로리 최대일. 2주차부터 인터벌이 들어간다.</small></dd>
-        <dt>목</dt><dd>기술 &amp; 모빌리티<small>액티브 리커버리를 겸한 회복일. 드리블과 저글링 위주로 숨이 덜 차게.</small></dd>
+        <dt>수</dt><dd>축구 레슨<small>클럽 레슨에 복귀한다. 론도 30분 · 기본기 10분 · 기본 패턴 20분 · 응용 패턴 20분 · 숏게임. 그 주의 칼로리 최대일이자 무릎 위험이 가장 높은 날이다 (R7).</small></dd>
+        <dt>목</dt><dd>기술 &amp; 모빌리티<small>레슨 다음날이다. 액티브 리커버리를 겸한 회복일로, 드리블과 저글링 위주로 숨이 덜 차게 한다.</small></dd>
         <dt>금</dt><dd>통합 서킷<small>공과 달리기를 묶은 서킷 + 연속 조깅 측정. 한 주를 숫자로 마감한다.</small></dd>
       </dl>
     </div>
@@ -81,11 +81,17 @@
       <ul class="rules" id="wuList" style="margin-top:.25rem"></ul>
       <span class="label" style="display:block;margin-top:.6rem">쿨다운</span>
       <ul class="rules" id="cdList" style="margin-top:.25rem"></ul>
+      <span class="label" style="display:block;margin-top:.6rem">매일 챙기는 준비물</span>
+      <div class="gearbox" id="gearAlways" style="margin-top:.25rem"></div>
     </div>
   </div>
   <div class="panel" data-span="3">
     <div class="ph"><h2>매일 지키는 것</h2><span class="label">예외 없음</span></div>
-    <div class="pb"><ul class="rules" id="evList"></ul></div>
+    <div class="pb">
+      <ul class="rules" id="evList"></ul>
+      <span class="label" style="display:block;margin-top:.7rem">쉬는 시간의 원칙</span>
+      <ul class="rules" id="restList" style="margin-top:.25rem"></ul>
+    </div>
   </div>
 </section>
 
@@ -160,6 +166,9 @@
   $('wuList').innerHTML = P.fixed.warmup.map(x => '<li>' + esc(x) + '</li>').join('');
   $('cdList').innerHTML = P.fixed.cooldown.map(x => '<li>' + esc(x) + '</li>').join('');
   $('evList').innerHTML = P.fixed.everyday.map(x => '<li>' + esc(x) + '</li>').join('');
+  $('restList').innerHTML = P.fixed.restRules.map(x => '<li>' + esc(x) + '</li>').join('');
+  $('gearAlways').innerHTML = '<span class="label">언제나</span>' +
+    P.fixed.gearAlways.map(x => '<span class="chip mute">' + esc(x) + '</span>').join('');
 
   $('weeks').innerHTML = P.weeks.filter(w => w.sessions).map(w => {
     const days = P.days.filter(x => x.week === w.no);
@@ -171,7 +180,7 @@
         '<span>세션 <b>' + w.sessions + '</b></span>' +
         '<span>예상 소모 <b>' + w.kcal.toLocaleString() + '</b> kcal</span>' +
         '<span>이동거리 <b>' + w.km + '</b> km</span>' +
-        '<span>총 시간 <b>250</b> 분</span>' +
+        '<span>총 시간 <b>' + window.DB_WEEK_MIN(w.no) + '</b> 분</span>' +
         '<span>완료 <b class="wkdone" data-week="' + w.no + '">' + weekCount(w) + '</b></span>' +
       '</div>' +
       '<div class="done-when" style="margin-top:.5rem"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
@@ -191,9 +200,10 @@
           '<span class="chip mute">RPE ' + esc(x.rpe) + '</span>' +
           '<span class="chip mute">약 ' + x.kcal + ' kcal</span>' +
           '<span class="chip mute">' + x.km.toFixed(1) + ' km</span>' +
-          '<span class="chip mute">50분</span>' +
+          '<span class="chip mute">' + window.DB_DAY_MIN(x) + '분</span>' +
         '</div>' +
         '<p class="hl">' + esc(x.headline) + '</p>' +
+        SES.gearHTML(x, P.fixed) +
         SES.progressHTML(x, d.sessions[x.date], { readonly: !canSave }) +
         SES.blocksHTML(x, d.sessions[x.date], { readonly: !canSave }) +
         '<div class="banlist"><span class="label">금지</span>' +

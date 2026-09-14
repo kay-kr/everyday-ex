@@ -92,6 +92,7 @@
     { id: 'run', t: '달리기', d: '이 플랜에서 칼로리를 태우는 주력. 속도보다 끊지 않는 것이 목표다.' },
     { id: 'strength', t: '근력 · 무릎 재활', d: '전부 무릎을 거의 굽히지 않고 엉덩이와 허벅지를 쓰는 동작으로 골랐다.' },
     { id: 'ball', t: '볼 기술', d: '공 하나와 계단 벽 · 그물 월만으로 할 수 있는 것들이다.' },
+    { id: 'lesson', t: '수요일 레슨', d: '레슨에서 실제로 하는 순서 그대로다. 강도를 내가 정하지 못하는 구간이라 무릎 주의를 특히 자세히 적었다.' },
     { id: 'cool', t: '쿨다운 · 스트레칭', d: '끝나고 5분. 운동 전에 하지 않고 반드시 끝나고 한다.' },
   ];
 
@@ -99,7 +100,7 @@
   /* 줄여 쓴 묶음 이름("무릎 관리 5종" 등)까지 펼쳐서 센다 */
   const dayMap = new Map();
   for (const day of P.days) {
-    const text = [day.theme].concat(day.blocks.map(b => b.name + ' ' + b.items.join(' ')));
+    const text = [day.theme].concat(day.blocks.map(b => b.name + ' ' + b.items.concat(b.notes || []).join(' ')));
     for (const m of window.DB_MOVES_FIND(text)) {
       if (!dayMap.has(m.k)) dayMap.set(m.k, []);
       dayMap.get(m.k).push(day);
