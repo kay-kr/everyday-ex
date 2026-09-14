@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko" data-root="..">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대화 기록 · 평일 저녁 축구 트레이닝</title>
+<script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="dashboard.css">
+<style>:root{--accent:#2E7D4F}</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <ul class="pages" id="dbPages"></ul>
+  <span class="spacer"></span>
+  <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
+</div>
+
+<header class="top">
+  <h1>대화 기록</h1>
+  <span class="badge accent" id="convCount">—</span>
+  <p class="lede">클로드와의 세션별 기록. 왼쪽 목록에서 제목을 고르면 오른쪽에 상세가 뜬다. 시각은 모두 KST.</p>
+</header>
+
+<div class="conv-layout">
+  <div class="panel">
+    <div class="ph"><h2>목록</h2><span class="label">최신 순</span></div>
+    <input class="search" id="convSearch" type="search" placeholder="제목 · 태그 · 요약 검색" aria-label="대화 기록 검색">
+    <ul class="convs scroll" id="convList"></ul>
+  </div>
+  <div class="panel" id="convDetail"></div>
+</div>
+
+<section class="grid" style="margin-top:.8rem">
+  <div class="panel" data-span="12" id="glossary">
+    <div class="ph"><h2>용어집</h2><span class="label">이 페이지에 나온 용어와 문서 코드</span></div>
+    <div class="pb"><dl class="glossary" id="glossaryList"></dl></div>
+  </div>
+</section>
+
+<footer><span>conversations.html</span><span>dashboard 스킬로 생성</span><span>로컬 파일</span></footer>
+</div>
+<script src="pages.js"></script>
+<script src="terms.js"></script>
+<script src="moves.js"></script>
+<script src="conversations.js"></script>
+<script src="dashboard.js"></script>
+<script>
+DB.conversations('convList','convDetail',window.DB_CONVERSATIONS,{searchEl:'convSearch',countEl:'convCount'});
+</script>
+</body>
+</html>

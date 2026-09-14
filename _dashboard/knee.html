@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko" data-root="..">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>무릎 관리 · 평일 저녁 축구 트레이닝</title>
+<script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="dashboard.css">
+<style>
+:root{--accent:#2E7D4F}
+.sig{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--line)}
+.sig:last-child{border-bottom:0}
+.sig .n{font:700 1.05rem/1.2 var(--mono);min-width:3.2rem;text-align:center;padding:.25rem .35rem;border-radius:5px}
+.sig .n.g{background:var(--good-soft);color:var(--good)}
+.sig .n.w{background:var(--warn-soft);color:var(--warn)}
+.sig .n.b{background:var(--bad-soft);color:var(--bad)}
+.sig b{display:block;font-size:.95rem}
+.sig p{color:var(--ink-2);font-size:.9rem;margin:.1rem 0 0}
+.ex{border-left:3px solid var(--accent);padding:.1rem 0 .35rem .7rem;margin:.65rem 0}
+.ex b{display:block}
+.ex .how{color:var(--ink-2);font-size:.9rem;margin:.15rem 0 0}
+.ex .cue{font-size:.85rem;color:var(--warn);margin:.2rem 0 0}
+.ex .cue::before{content:"자세 요령 — ";font-weight:600}
+.flow{counter-reset:f;padding-left:0;list-style:none;margin:0}
+.flow li{counter-increment:f;position:relative;padding:.35rem 0 .35rem 2rem;border-bottom:1px solid var(--line)}
+.flow li:last-child{border-bottom:0}
+.flow li::before{content:counter(f);position:absolute;left:0;top:.4rem;width:1.4rem;height:1.4rem;border-radius:50%;background:var(--accent-soft);color:var(--accent);font:600 .8rem/1.4rem var(--mono);text-align:center}
+.red{border:1px solid var(--bad);border-radius:6px;padding:.6rem .7rem;background:var(--bad-soft)}
+.red b{color:var(--bad)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <ul class="pages" id="dbPages"></ul>
+  <span class="spacer"></span>
+  <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
+</div>
+
+<header class="top">
+  <h1>왼쪽 무릎 관리</h1>
+  <span class="badge" data-state="관리 중">관리 중</span>
+  <span class="badge">R1 · 최우선 제약</span>
+  <p class="lede">이 3주 플랜에서 강도를 정하는 것은 체력이 아니라 왼쪽 무릎이다. 통증이 생겼을 때 무엇을 멈추고 무엇을 바꿀지 여기서 정해 둔다. 오늘 루틴은 <a data-page="DASHBOARD.html">대시보드</a>, 전체는 <a data-page="plan.html">3주 루틴</a>에 있다.</p>
+  <div class="meta"><span>갱신 <b><time datetime="2026-09-14T15:30+09:00">2026-09-14 15:30 KST</time></b></span></div>
+</header>
+
+<section class="grid">
+  <div class="panel" data-span="7">
+    <div class="ph"><h2>증상을 어떻게 읽었는가</h2><span class="label">플랜 설계의 출발점</span></div>
+    <div class="pb prose">
+      <p>말한 증상은 세 가지다. 슬개골 안쪽 통증, 슬개건 통증, 대퇴사두건 통증이 간헐적으로 오고, <b>계단을 내려갈 때와 내리막에서 나온다</b>는 것.</p>
+      <p>이 조합은 슬개대퇴통증의 전형적인 모습이다. 계단을 내려갈 때 무릎이 받는 압력은 평지 걷기의 서너 배까지 올라가는데, 그 부하를 근육이 늘어나면서 버티는 편심 수축으로 감당해야 해서 힘줄에도 가장 큰 장력이 걸린다. 통증이 정확히 그 구간에만 나온다는 것은 관절 자체가 망가졌다기보다 <b>그 부하를 나눠 질 근육이 부족하다</b>는 뜻일 가능성이 크다.</p>
+      <p>그래서 이번 3주의 설계는 단순하다. 첫째, 통증을 만드는 동작을 아예 뺀다. 둘째, 부하를 나눠 질 둔근과 대퇴사두근을 무릎을 거의 쓰지 않는 자세로 만든다. 셋째, 체중을 줄여 무릎이 받는 절대량을 낮춘다. 체중 1kg이 줄면 계단에서 무릎이 받는 힘은 그보다 여러 배로 줄어든다 — 이번 감량 목표에는 그 이유도 들어 있다.</p>
+      <p class="no-tip" style="color:var(--muted);font-size:.87rem;border-top:1px solid var(--line);padding-top:.5rem;margin-top:.7rem">이 페이지는 진단이 아니다. 운동을 안전한 범위로 묶기 위한 자기 관리 기준일 뿐이고, 아래 빨간 신호가 하나라도 있거나 3주 뒤에도 나아지지 않으면 정형외과에서 확인하는 것이 맞다.</p>
+    </div>
+  </div>
+  <div class="panel" data-span="5">
+    <div class="ph"><h2>통증 신호등</h2><span class="label">NRS 기준 · 매 세션 적용</span></div>
+    <div class="pb">
+      <div class="sig"><span class="n g">0~3</span><div><b>그대로 진행</b><p>운동 중 뻐근한 정도는 정상 범위다. 계획된 세트를 다 한다.</p></div></div>
+      <div class="sig"><span class="n w">4~5</span><div><b>그 종목만 중단</b><p>남은 시간은 걷기나 볼터치로 채운다. 다음 세션에서도 그 종목을 뺀다.</p></div></div>
+      <div class="sig"><span class="n b">6 이상</span><div><b>세션 종료</b><p>걸어서 정리하고 끝낸다. 이틀 쉬고, 다시 같은 통증이 나오면 진료를 잡는다.</p></div></div>
+      <div class="sig"><span class="n w">아침</span><div><b>다음날 아침이 더 아프면</b><p>부하가 과했다는 가장 정확한 신호다. 그 주 전체 강도를 30% 내리고, 증량은 한 주 미룬다.</p></div></div>
+      <div class="sig"><span class="n b">즉시</span><div><b>숫자와 무관하게 중단</b><p>부기, 열감, 무릎이 꺾이는 느낌, 갑자기 안 펴지는 느낌 중 하나라도 있을 때.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>3주 안전선</h2><span class="label">예외 없이 지킨다</span></div>
+    <div class="pb">
+      <ul class="rules">
+        <li><b>계단 내려가기 금지.</b> 3주 내내. 2주차부터 계단을 오르긴 하지만 내려올 때는 몸을 옆으로 돌려 한 칸씩, 오른발이 먼저 닿게, 손으로 지지한다.</li>
+        <li><b>무릎 굽힘 60도까지.</b> 벽 스쿼트도 60도가 상한이다. 깊은 스쿼트와 런지는 3주간 없다.</li>
+        <li><b>점프 착지 없음.</b> 헤딩 점프, 박스 점프, 제자리 점프 모두 뺐다.</li>
+        <li><b>컷팅 각도 제한.</b> 1주차 45도, 2주차 60도, 3주차 80% 속도까지. 그 이상은 4주차 이후.</li>
+        <li><b>슛 볼륨 제한.</b> 2주차 60% 강도부터 시작해 3주차 75%까지만. 오른발로 찰 때 왼쪽이 지지발이 되어 비틀림을 받기 때문이다.</li>
+        <li><b>주당 증가폭 20% 이내.</b> 건병증은 총량의 급증에 가장 약하다.</li>
+        <li><b>인조잔디에서는 TF 또는 러닝화.</b> 긴 스터드는 발을 고정시켜 무릎이 대신 비틀린다.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>매일 하는 재활 5종</h2><span class="label">쿨다운에 포함 · 약 5분</span></div>
+    <div class="pb">
+      <div class="ex"><b>① 세라밴드 클램쉘 15회 × 2</b>
+        <p class="how">옆으로 누워 무릎을 90도로 굽히고 발뒤꿈치를 붙인 채, 무릎 위에 건 밴드를 이기며 위쪽 무릎만 벌렸다 모은다.</p>
+        <p class="cue">골반이 뒤로 넘어가면 엉덩이 대신 허리를 쓰게 된다. 등 뒤에 벽을 두고 하면 확인하기 쉽다.</p></div>
+      <div class="ex"><b>② 밴드 사이드 스텝 10보 왕복 × 2</b>
+        <p class="how">발목에 밴드를 걸고 무릎을 살짝 굽힌 채 옆으로 걷는다. 갔다가 같은 걸음 수로 돌아온다.</p>
+        <p class="cue">발끝은 계속 앞을 본다. 발끝이 이동 방향으로 돌아가면 효과가 사라진다.</p></div>
+      <div class="ex"><b>③ 글루트 브릿지 15회</b>
+        <p class="how">누워서 무릎을 세우고 엉덩이만 들어 올린다. 위에서 1초 멈췄다 내린다.</p>
+        <p class="cue">허리를 젖혀 올리지 말고 엉덩이를 조여서 민다. 허리가 먼저 아프면 발을 몸쪽으로 더 당긴다.</p></div>
+      <div class="ex"><b>④ 카프 레이즈 20회</b>
+        <p class="how">평지에서 발뒤꿈치를 천천히 들었다 내린다. 계단 끝에 걸치고 하지 않는다.</p>
+        <p class="cue">내릴 때를 올릴 때보다 느리게. 종아리가 충격을 먼저 받아 주면 무릎으로 가는 힘이 줄어든다.</p></div>
+      <div class="ex"><b>⑤ 대퇴사두 스트레칭 30초 × 2</b>
+        <p class="how">서서 발목을 잡아 뒤꿈치를 엉덩이로 당긴다. 무릎 앞이 당기면 엎드린 자세로 바꾼다.</p>
+        <p class="cue">무릎이 몸 앞으로 나가지 않게. 골반을 앞으로 밀면 허벅지 앞이 제대로 늘어난다.</p></div>
+    </div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>통증이 났을 때</h2><span class="label">순서대로 따라간다</span></div>
+    <div class="pb">
+      <ol class="flow">
+        <li>동작을 멈추고 NRS를 숫자로 매긴다. 참고 한 세트 더 하지 않는다.</li>
+        <li>3 이하면 그 종목을 계속하되 세트 수를 절반으로 줄인다.</li>
+        <li>4 이상이면 그 종목을 접고 남은 시간을 걷기와 제자리 볼터치로 채운다. 세션을 통째로 버리지는 않는다.</li>
+        <li>집에 와서 15분 냉찜질. 붓거나 열감이 있을 때만 하고, 없으면 그냥 다리를 올리고 쉰다.</li>
+        <li>다음날 아침 통증을 다시 적는다. 이 숫자가 전날보다 낮으면 회복된 것이다.</li>
+        <li>아침 통증이 이틀 연속 올라가면 그 주는 화요일 루틴(근력 · 무릎 재건)만 반복하고 달리기를 뺀다.</li>
+        <li>그렇게 한 주를 보내도 나아지지 않으면 진료를 잡는다. 플랜은 그다음에 다시 짠다.</li>
+      </ol>
+      <div class="red" style="margin-top:.7rem">
+        <b>바로 병원에 가야 하는 신호</b>
+        <ul class="rules" style="margin-top:.3rem">
+          <li>무릎이 눈에 띄게 붓거나 만졌을 때 열이 난다</li>
+          <li>걷다가 무릎이 갑자기 꺾이거나 힘이 빠진다</li>
+          <li>무릎이 어느 각도에서 걸려 펴지지 않는다</li>
+          <li>가만히 있어도, 특히 밤에 아프다</li>
+          <li>한 번의 사고 뒤에 바로 시작된 통증이다</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="7">
+    <div class="ph"><h2>화요일 재건 서킷 — 자세 요령</h2><span class="label">동작 순서는 <a data-page="plan.html">3주 루틴</a>에</span></div>
+    <div class="pb prose">
+      <p>화요일 서킷 7종은 전부 <b>무릎을 거의 굽히지 않고 엉덩이와 허벅지를 쓰는</b> 동작으로 골랐다. 무릎이 아픈 상태에서도 근육을 만들 수 있어야 하기 때문이다. 순서는 의미가 있다 — 버티는 힘(아이소메트릭)으로 시작해 둔근, 그다음 코어로 간다.</p>
+      <div class="ex"><b>벽 아이소메트릭 스쿼트</b>
+        <p class="how">벽에 등을 대고 무릎이 60도가 될 때까지만 미끄러져 내려가 버틴다. 발은 무릎보다 앞에 두어 무릎이 발끝을 넘지 않게.</p>
+        <p class="cue">통증이 있는 힘줄에 가장 안전하게 힘을 줄 수 있는 방법이다. 버티는 동안 오히려 통증이 줄어드는 경우도 흔하다. 30~45초가 지나도 아프지 않다면 잘 하고 있는 것.</p></div>
+      <div class="ex"><b>몬스터워크</b>
+        <p class="how">밴드를 무릎 위나 발목에 걸고 무릎을 살짝 굽힌 채 앞으로 10~14보, 뒤로 같은 수만큼.</p>
+        <p class="cue">상체가 좌우로 흔들리면 걸음 폭이 너무 크다. 폭을 줄이고 엉덩이 옆이 계속 긴장을 유지하게 한다.</p></div>
+      <div class="ex"><b>사이드 라잉 힙 앱덕션</b>
+        <p class="how">옆으로 누워 아래 무릎은 굽히고 위 다리를 곧게 편 채 천천히 들어 올린다.</p>
+        <p class="cue">다리를 몸보다 살짝 뒤로 보낸 채 올린다. 앞으로 올리면 엉덩이 대신 허벅지 앞이 일한다.</p></div>
+      <div class="ex"><b>데드버그</b>
+        <p class="how">누워서 팔과 반대쪽 다리를 동시에 뻗었다 돌아온다. 좌우 교대로 10~12회.</p>
+        <p class="cue">허리와 바닥 사이가 벌어지는 순간이 한계다. 그 전까지만 뻗는다.</p></div>
+      <div class="ex"><b>지면 편심 미니 스쿼트 (3주차 조건부)</b>
+        <p class="how">한 발로 서서 무릎을 30도까지만 3초에 걸쳐 천천히 굽히고, 2초에 올라온다. 8회 × 2.</p>
+        <p class="cue">3주 전체에서 가장 조심스러운 동작이다. 최근 3일 NRS가 모두 2 이하일 때만 하고, 애매하면 그냥 건너뛰고 벽 스쿼트로 대체한다. 40cm 계단에서의 스텝다운은 3주차에도 하지 않는다.</p></div>
+    </div>
+  </div>
+  <div class="panel" data-span="5">
+    <div class="ph"><h2>자주 나오는 질문</h2></div>
+    <div class="pb prose">
+      <h3>아프면 쉬는 게 맞지 않나</h3>
+      <p>완전히 쉬면 통증은 잠깐 줄지만 근육이 더 빠져서 돌아왔을 때 더 아프다. 그래서 이 플랜은 쉬는 대신 <b>아프지 않은 동작으로 갈아타는</b> 방식을 쓴다. 화요일 루틴은 통증이 있는 주에도 대부분 그대로 할 수 있게 짜 두었다.</p>
+      <h3>보호대를 차야 하나</h3>
+      <p>필요하면 차도 되지만 근력을 대신하지는 못한다. 슬개골 주변을 감싸는 형태가 계단에서 심리적으로 도움이 된다는 사람이 많다. 다만 차고 나서 아픈 동작을 더 하게 되면 오히려 손해다.</p>
+      <h3>아이싱과 온찜질 중 뭘 해야 하나</h3>
+      <p>붓거나 열감이 있으면 냉찜질 15분. 그냥 뻣뻣하기만 하면 운동 전 가벼운 온찜질이 낫다. 매일 습관적으로 얼음을 대는 것은 권하지 않는다.</p>
+      <h3>축구화는 뭘 신나</h3>
+      <p>인조잔디에서는 바닥 돌기가 짧고 촘촘한 TF가 낫다. 이번 3주는 달리기 비중이 크니 러닝화로 와서 볼 훈련 때만 갈아 신는 것도 좋은 방법이다.</p>
+      <h3>주말에 경기를 뛰어도 되나</h3>
+      <p>1주차는 권하지 않는다. 2주차부터는 뛰되 풀타임 대신 전반만, 그리고 다음 월요일 강도를 한 단계 내린다.</p>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="12" id="glossary">
+    <div class="ph"><h2>용어집</h2><span class="label">이 페이지에 나온 용어와 문서 코드</span></div>
+    <div class="pb"><dl class="glossary" id="glossaryList"></dl></div>
+  </div>
+</section>
+
+<footer><span>knee.html</span><span>dashboard 스킬로 생성</span><span>로컬 파일</span><span>진단이 아닌 자기 관리 기준</span></footer>
+</div>
+<script src="pages.js"></script>
+<script src="terms.js"></script>
+<script src="moves.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

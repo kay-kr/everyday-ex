@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="ko" data-root=".">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>평일 저녁 축구 트레이닝 대시보드</title>
+<script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="_dashboard/dashboard.css">
+<style>
+:root{--accent:#2E7D4F}
+.today-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
+.today-head .dnum{font:600 1.35rem/1 var(--sans);color:var(--accent)}
+.today-head .dtheme{font:600 1.2rem/1.3 var(--sans)}
+.blk{border-left:3px solid var(--line-2);padding:.15rem 0 .35rem .7rem;margin:.6rem 0}
+.blk.main{border-left-color:var(--accent)}
+.blk>b{display:block;font-size:.95rem}
+.blk>b .m{color:var(--muted);font:500 .82rem var(--mono);margin-left:.4rem}
+.blk ul{margin:.25rem 0 0;padding-left:1.05rem;color:var(--ink-2)}
+.blk li{margin:.12rem 0}
+.banlist{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+.banlist .chip{background:var(--bad-soft);color:var(--bad)}
+.zrow{display:flex;gap:.45rem;align-items:baseline;padding:.3rem 0;border-bottom:1px solid var(--line)}
+.zrow:last-child{border-bottom:0}
+.zrow .zz{font:600 .8rem var(--mono);background:var(--accent-soft);color:var(--accent);padding:.05rem .3rem;border-radius:3px}
+.zrow .zb{font:500 .88rem var(--mono);margin-left:auto;white-space:nowrap}
+.zrow .zu{color:var(--muted);font-size:.82rem;flex-basis:100%;margin-left:2.2rem}
+.wkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+.wkgrid .c{border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem}
+.wkgrid .c b{display:block;font-size:.88rem}
+.wkgrid .c .n{font:600 1.1rem var(--mono)}
+.wkgrid .c small{color:var(--muted);display:block;font-size:.78rem}
+.movebox{margin-top:.6rem;border-top:1px solid var(--line);padding-top:.45rem}
+.movebox>summary{cursor:pointer;font:600 .85rem var(--sans);color:var(--accent);list-style:none;padding:.15rem 0}
+.movebox>summary::-webkit-details-marker{display:none}
+.movebox>summary::before{content:"▸";display:inline-block;margin-right:.35rem;transition:transform .12s}
+.movebox[open]>summary::before{transform:rotate(90deg)}
+.movelist{list-style:none;margin:.35rem 0 0;padding:0}
+.movelist li{padding:.3rem 0;border-bottom:1px solid var(--line)}
+.movelist li:last-child{border-bottom:0}
+.movelist a{font-weight:600;font-size:.9rem;text-decoration:none;border-bottom:1px solid var(--line-2)}
+.movelist span{display:block;color:var(--ink-2);font-size:.85rem;margin-top:.1rem}
+.movelist em{display:block;color:var(--bad);font-size:.82rem;font-style:normal;margin-top:.1rem}
+.movecat{display:block;font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.55rem 0 .1rem;border-bottom:1px solid var(--line-2);padding-bottom:.12rem}
+.movecat b{color:var(--accent)}
+.movelist i{font:500 .78rem var(--mono);font-style:normal;color:var(--muted);margin-left:.4rem}
+.moveall{margin:.4rem 0 0;font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <ul class="pages" id="dbPages"></ul>
+  <span class="spacer"></span>
+  <span class="source" id="dbSource" data-state="static"><span class="dot"></span><span class="txt">정적</span></span>
+  <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
+</div>
+
+<header class="top">
+  <h1>평일 저녁 축구 트레이닝 · 3주</h1>
+  <span class="badge" data-state="진행 중">진행 중</span>
+  <span class="badge accent" id="hdWeek">1주차</span>
+  <span class="badge">주 5회 × 50분</span>
+  <p class="lede">퇴근 후 광명시민운동장에서 혼자, 축구공 하나로 50분. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
+  <div class="meta">
+    <span>갱신 <b><time datetime="2026-09-14T15:30+09:00">2026-09-14 15:30 KST</time></b></span>
+    <span>기간 <b>2026-09-14 ~ 10-02 (15세션)</b></span>
+    <span>장소 <b>광명시민운동장 인조잔디 · 3단 계단 · 그물 월 10m · 러닝트랙</b></span>
+    <span>기준 <b>1973년생 · 170cm · 73~74kg · BMI 25.4</b></span>
+  </div>
+</header>
+
+<!-- ── 핵심 지표 ── -->
+<section class="grid">
+  <div class="panel" data-span="12">
+    <div class="tiles">
+      <div class="tile"><span class="label">오늘</span><span class="v" id="kToday" style="font-size:1.05rem">—</span><span class="s" id="kTodaySub">—</span></div>
+      <div class="tile"><span class="label">완료 세션</span><span class="v num"><span id="kDone">0</span> / 15</span><span class="s" id="kDoneSub">기록 페이지에서 체크하면 채워진다</span><div class="meter"><i id="kDoneBar" style="width:0%"></i></div></div>
+      <div class="tile"><span class="label">무릎 NRS 평균</span><span class="v num" id="kNrs">—</span><span class="s" id="kNrsSub">3 이하면 계획대로 증량</span></div>
+      <div class="tile"><span class="label">체중</span><span class="v num" id="kW">—</span><span class="s" id="kWSub">시작 73.5kg 기준</span></div>
+      <div class="tile"><span class="label">누적 이동거리</span><span class="v num" id="kKm">—</span><span class="s">걷기 포함 · km</span></div>
+      <div class="tile"><span class="label">연속 수행</span><span class="v num" id="kStreak">—</span><span class="s">계획된 날 기준 연속 일수</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 오늘 세션 + 지금 ── -->
+<section class="grid">
+  <div class="panel" data-span="8">
+    <div class="ph"><h2>오늘 할 세션</h2><span class="label"><a data-page="_dashboard/plan.html">3주 전체 루틴</a></span></div>
+    <div class="pb" id="todayBox"></div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>지금</h2><span class="label">현재 단계 · 다음 할 일</span></div>
+    <div class="pb">
+      <span class="label">현재 단계</span>
+      <p style="font-weight:600;font-size:1.1rem;margin:.15rem 0 .2rem" id="nowStage">S1 · 적응주</p>
+      <p style="color:var(--ink-2)" id="nowText">이번 주는 기록을 모으는 주간이다. 무릎이 어디까지 견디는지 숫자로 확인하는 것이 유산소 성과보다 우선한다. S1의 통과 조건을 넘겨야 S2에서 인터벌과 슛을 넣는다.</p>
+      <span class="label" style="display:block;margin-top:.7rem">다음 할 일</span>
+      <ol class="next" style="margin-top:.3rem">
+        <li>오늘 세션을 마치고 <a data-page="_dashboard/log.html">기록</a>에 NRS · RPE · 거리를 입력한다</li>
+        <li>내일 아침 무릎 통증을 한 번 더 적는다 — 전날보다 높으면 강도를 30% 내린다</li>
+        <li>금요일에 연속 조깅 8분 거리를 재서 3주차 T1의 기준선을 만든다</li>
+      </ol>
+      <div class="blocked-note" style="margin-top:.7rem"><b>주의</b>계단 내려가기는 3주 내내 금지다. 슬개대퇴통증에서 가장 확실한 통증 유발 동작이라 R1로 따로 관리한다.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 단계 · 결정 · 리스크 ── -->
+<section class="grid">
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>단계</h2><span class="label">통과 조건을 넘겨야 다음 주로</span></div>
+    <div class="pb">
+      <div class="progress" aria-label="진행률"><div class="bar"><i></i></div><span class="pct">—</span></div>
+      <ol class="steps" id="stepList"></ol>
+    </div>
+  </div>
+  <div class="panel" data-span="3" id="decisions">
+    <div class="ph"><h2>결정 사항</h2><span class="label">왜 이렇게 짰는가</span></div>
+    <div class="pb">
+      <dl class="kv">
+        <dt>D1</dt><dd>유산소 우선, 근력은 보조<small>목표가 체중 감량과 기초 체력이라 시간의 절반 이상을 유산소에 쓴다. 다만 둔근 근력은 무릎을 지키는 장치라 매주 넣는다.</small></dd>
+        <dt>D2</dt><dd>1주차는 워크-런<small>10분 조깅은 되지만 주 5일 연속 부하는 다른 문제다. 걷기를 끼워 총량을 늘리고 관절 충격을 낮춘다.</small></dd>
+        <dt>D3</dt><dd>계단 내려가기 3주 금지<small>통증이 정확히 그 동작에서 나온다. 편심 부하를 없애는 것이 이번 3주의 제1 안전선이다.</small></dd>
+        <dt>D4</dt><dd>슛은 2주차부터 60%→75%<small>오른발로 찰 때 왼쪽이 지지발이 되어 비틀림을 받는다. 횟수와 강도를 모두 묶었다.</small></dd>
+        <dt>D5</dt><dd>심박 구간은 만 53세 기준<small>1973년생 · HRmax 171로 계산했다. 나이가 한 살 오르면 plandata.js 의 age·hrmax·zones 를 함께 고친다.</small></dd>
+        <dt>D6</dt><dd>식단은 건드리지 않음<small>본인이 선택한 방식이다. 대신 되돌리기 쉬운 3가지만 권장으로 둔다.</small></dd>
+        <dt>D7</dt><dd>주 5일 × 50분 고정<small>주말은 회복. 생활축구 경기를 뛴 주는 월요일 강도를 한 단계 내린다.</small></dd>
+      </dl>
+    </div>
+  </div>
+  <div class="panel" data-span="3" id="risks">
+    <div class="ph"><h2>리스크</h2><span class="label">미리 정해 둔 대응</span></div>
+    <div class="pb">
+      <ul class="rules">
+        <li>R1 · 슬개대퇴통증 악화 — 편심 부하가 최대 유발 요인. 계단 하강·깊은 스쿼트·점프 착지를 3주간 뺀다.</li>
+        <li>R2 · 인조잔디에서 스터드가 박히면 발 대신 무릎이 비틀린다. 컷팅 각도와 속도를 제한하고 TF 또는 러닝화를 권한다.</li>
+        <li>R3 · 건병증은 급격한 볼륨 증가에 약하다. 주당 증가폭을 20% 안으로 묶었다.</li>
+        <li>R4 · 오른발 슛이 오히려 왼쪽 지지발에 부하를 준다. 슛 횟수를 양발 모두 제한한다.</li>
+        <li>R5 · 저녁 고강도는 수면을 방해한다. 수요일·금요일은 취침 3시간 전 종료.</li>
+        <li>R6 · 야간 단독 운동. 휴대폰을 지참하고 조명이 있는 구역에서만 한다.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── 부하 곡선 + 15일 표 ── -->
+<section class="grid">
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>일별 예상 소모</h2><span class="label">kcal · 73.5kg 기준 추정</span></div>
+    <div class="pb tight"><div class="chart"><canvas id="chartLoad"></canvas></div></div>
+    <div class="pf"><span>1주차 <b>1,670</b></span><span>2주차 <b>1,890</b></span><span>3주차 <b>2,070</b></span><span>합계 <b>5,630 kcal</b></span></div>
+  </div>
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>15세션 한눈에</h2><span class="label" id="tblLabel">—</span></div>
+    <div class="pb tight" id="tblDays"></div>
+  </div>
+</section>
+
+<!-- ── 기록 추세 ── -->
+<section class="grid">
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>체중 추세</h2><span class="label">kg · 아침 공복, 주 3회</span></div>
+    <div class="pb tight"><div class="chart"><canvas id="chartW"></canvas></div></div>
+    <div class="pf"><span>시작 <b id="wStart">—</b></span><span>현재 <b id="wNow">—</b></span><span>3주 목표 <b>72.3~72.8</b></span></div>
+  </div>
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>무릎 통증 추세</h2><span class="label">NRS 0~10 · 초록은 다음날 아침</span></div>
+    <div class="pb tight"><div class="chart"><canvas id="chartNrs"></canvas></div></div>
+    <div class="pf"><span>1주차 평균 <b id="nw1">—</b></span><span>2주차 <b id="nw2">—</b></span><span>3주차 <b id="nw3">—</b></span><span>기준선 <b>3</b></span></div>
+  </div>
+</section>
+
+<!-- ── 심박 구간 · 무릎 안전선 · 식단 ── -->
+<section class="grid">
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>심박 구간</h2><span class="label">만 53세 · HRmax 171 기준</span></div>
+    <div class="pb" id="zoneBox"></div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>무릎 신호등</h2><span class="label"><a data-page="_dashboard/knee.html">관리 프로토콜</a></span></div>
+    <div class="pb">
+      <ul class="rules">
+        <li><span class="chip good">0~3</span> 계획대로 진행한다. 운동 중 이 정도 뻐근함은 정상 범위다.</li>
+        <li><span class="chip warn">4~5</span> 그 종목만 즉시 중단하고 남은 블록은 걷기로 대체한다. 다음 세션에서도 그 종목을 뺀다.</li>
+        <li><span class="chip bad">6+</span> 세션을 끝낸다. 이틀 쉬고, 다시 아프면 정형외과 진료를 잡는다.</li>
+        <li>다음날 아침 통증이 전날보다 높으면 그 주 전체 강도를 30% 내린다.</li>
+        <li>부기·열감·무릎이 꺾이는 느낌이 있으면 숫자와 상관없이 중단한다.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>식단 최소 3원칙</h2><span class="label">강제 아님 · 권장 (D6)</span></div>
+    <div class="pb">
+      <dl class="kv" id="dietBox"></dl>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.5rem">운동만으로는 3주에 지방 약 0.7kg이 빠진다. 이 3가지를 지키면 1.2~1.5kg까지 기대할 수 있다. 그 이상 빠지면 대부분 수분이다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 대화 기록 · 바로가기 · 이력 ── -->
+<section class="grid">
+  <div class="panel" data-span="5">
+    <div class="ph"><h2>대화 기록</h2><span class="label"><a data-page="_dashboard/conversations.html">전체 보기</a></span></div>
+    <ul class="convs" id="convRecent"></ul>
+  </div>
+  <div class="panel" data-span="3">
+    <div class="ph"><h2>바로가기</h2></div>
+    <div class="pb">
+      <ul class="links">
+        <li><a href="_dashboard/plan.html">3주 루틴 전체</a><span class="path">_dashboard/plan.html</span></li>
+        <li><a href="_dashboard/knee.html">무릎 관리</a><span class="path">_dashboard/knee.html</span></li>
+        <li><a href="_dashboard/log.html">기록 입력</a><span class="path">_dashboard/log.html</span></li>
+        <li><a href="_dashboard/plandata.js">플랜 원본 데이터</a><span class="path">_dashboard/plandata.js</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>변경 이력</h2></div>
+    <div class="pb">
+      <ul class="history">
+        <li><time datetime="2026-09-14T15:30+09:00">09-14 15:30</time><span>나이를 1973년생(만 53세)로 확정해 심박 구간 재계산 · 동작 사전 50가지 추가</span></li>
+        <li><time datetime="2026-09-14T12:00+09:00">09-14 12:00</time><span>3주 플랜 확정, 대시보드·루틴·무릎 관리·기록 페이지 생성</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="12" id="glossary">
+    <div class="ph"><h2>용어집</h2><span class="label">점선 밑줄 = 용어, 초록 코드 = 문서 코드. 마우스를 올리거나 Tab으로 이동하면 뜬다</span></div>
+    <div class="pb"><dl class="glossary" id="glossaryList"></dl></div>
+  </div>
+</section>
+
+<footer><span>DASHBOARD.html</span><span>dashboard 스킬로 생성</span><span>로컬 파일</span><span>모든 시각 KST</span></footer>
+</div>
+
+<script src="_dashboard/pages.js"></script>
+<script src="_dashboard/terms.js"></script>
+<script src="_dashboard/moves.js"></script>
+<script src="_dashboard/plandata.js"></script>
+<script src="_dashboard/store.js"></script>
+<script src="_dashboard/conversations.js"></script>
+<script src="_dashboard/dashboard.js"></script>
+<script>
+(function () {
+  const P = window.DB_PLAN, LOG = window.EXLOG;
+  const d = LOG.load(), st = LOG.stats(d, P);
+  const $ = id => document.getElementById(id);
+  const esc = DB.esc;
+  const md = (s, n) => s == null ? '—' : (+s).toFixed(n);
+
+  /* ── 오늘 세션 카드 ── */
+  const day = st.todayDay || st.nextDay;
+  const box = $('todayBox');
+  if (!day) {
+    box.innerHTML = '<div class="empty">3주 플랜의 15세션을 모두 지났다. 테스트 결과로 다음 플랜을 짤 차례다.</div>';
+    $('kToday').textContent = '완주';
+    $('kTodaySub').textContent = 'S4 리뷰 단계';
+  } else {
+    const isToday = !!st.todayDay;
+    const rest = !isToday ? '<span class="chip warn">오늘은 계획된 세션이 없다 — 아래는 다음 세션이다</span>' : '';
+    box.innerHTML =
+      rest +
+      '<div class="today-head">' +
+        '<span class="dnum">' + DB.fmt(day.date, 'kstdate').slice(5) + ' (' + day.dow + ')</span>' +
+        '<span class="dtheme">' + esc(day.theme) + '</span>' +
+        '<span class="chip accent">' + day.week + '주차 · ' + day.id.toUpperCase() + '</span>' +
+        '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
+        '<span class="chip mute">약 ' + day.kcal + ' kcal</span>' +
+        '<span class="chip mute">' + day.km.toFixed(1) + ' km</span>' +
+      '</div>' +
+      '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
+      day.blocks.map(b =>
+        '<div class="blk' + (/메인|테스트|신규/.test(b.name) ? ' main' : '') + '">' +
+        '<b>' + esc(b.name) + '<span class="m">' + b.min + '분</span></b>' +
+        '<ul>' + b.items.map(i => '<li>' + esc(i) + '</li>').join('') + '</ul></div>'
+      ).join('') +
+      '<div class="banlist"><span class="label" style="align-self:center">오늘 하지 않는 것</span>' +
+        day.ban.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div>' +
+      window.DB_MOVES_PANEL(day, '_dashboard/');
+
+    $('kToday').textContent = isToday ? day.theme : '휴식';
+    $('kTodaySub').textContent = isToday
+      ? (day.week + '주차 · RPE ' + day.rpe + ' · 약 ' + day.kcal + ' kcal')
+      : ('다음 세션 ' + day.date.slice(5).replace('-', '/') + ' (' + day.dow + ')');
+  }
+
+  /* ── KPI ── */
+  $('kDone').textContent = st.doneCount;
+  $('kDoneBar').style.width = st.donePct + '%';
+  $('kDoneSub').textContent = st.hasData
+    ? (st.donePct + '% 완료 · 이번 주 ' + st.weekDone + '/5')
+    : '기록 페이지에서 체크하면 채워진다';
+  $('kNrs').textContent = md(st.nrsAvg, 1);
+  if (st.nrsAvg != null) {
+    $('kNrs').classList.add(st.nrsAvg <= 3 ? 'up' : 'down');
+    $('kNrsSub').textContent = st.nrsAvg <= 3 ? '기준선 안 — 계획대로 증량' : '기준선 초과 — 증량 보류';
+  }
+  $('kW').textContent = st.weightLast != null ? md(st.weightLast, 1) : '—';
+  if (st.weightDelta != null) {
+    $('kWSub').textContent = '시작 대비 ' + (st.weightDelta > 0 ? '+' : '−') + Math.abs(st.weightDelta).toFixed(1) + 'kg · BMI ' + md(st.bmi, 1);
+  }
+  $('kKm').textContent = st.kmSum ? st.kmSum.toFixed(1) : '—';
+  $('kStreak').textContent = st.streak || '—';
+
+  /* ── 단계 ── */
+  $('stepList').innerHTML = P.weeks.map((w, i) => {
+    let status = w.status;
+    if (st.hasData) {
+      const wd = P.days.filter(x => x.week === w.no);
+      const alldone = wd.length && wd.every(x => (d.sessions[x.date] || {}).done);
+      if (alldone) status = 'done';
+      else if (w.no === st.currentWeek) status = 'active';
+      else if (w.no < st.currentWeek) status = 'done';
+    }
+    const tag = status === 'active' ? ' <span class="tag active">진행 중</span>' : status === 'done' ? '' : ' <span class="tag gate">gate</span>';
+    return '<li class="step" data-status="' + status + '" id="s' + w.no + '"><div class="mark"><span>' + w.no + '</span></div><div>' +
+      '<h3>' + w.id + ' · ' + esc(w.title) + ' <span class="label">' + esc(w.range) + '</span>' + tag + '</h3>' +
+      '<div class="d">' + esc(w.goal) + (w.sessions ? ' <span class="label">' + w.sessions + '세션 · 약 ' + w.kcal.toLocaleString() + ' kcal · ' + w.km + ' km</span>' : '') + '</div>' +
+      '<div class="done-when"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
+      '</div></li>';
+  }).join('');
+
+  /* 진행률 — dashboard.js 의 자동 계산은 이 목록이 그려지기 전에 끝나므로 여기서 다시 채운다 */
+  (function () {
+    const steps = [...$('stepList').querySelectorAll('.step')];
+    const prog = $('stepList').parentElement.querySelector('.progress');
+    const dn = steps.filter(s => s.dataset.status === 'done').length;
+    const ac = steps.filter(s => s.dataset.status === 'active').length;
+    const p = Math.round((dn + ac * .5) / steps.length * 100);
+    prog.querySelector('.bar i').style.width = p + '%';
+    prog.querySelector('.pct').textContent = dn + ' / ' + steps.length + ' 단계 · ' + p + '%';
+  })();
+
+  $('hdWeek').textContent = st.currentWeek + '주차';
+  const cw = P.weeks[st.currentWeek - 1];
+  $('nowStage').textContent = cw.id + ' · ' + cw.title + ' (' + cw.range + ')';
+
+  /* ── 차트 ── */
+  DB.barChart('chartLoad', {
+    labels: P.days.map(x => x.date.slice(5).replace('-', '/')),
+    values: P.days.map(x => x.kcal), yfmt: 'int',
+  });
+
+  DB.lineChart('chartW', {
+    series: [{ points: st.weightSeries, dots: true }],
+    baseline: P.profile.weightStart, yfmt: 'num:1', xfmt: 'kstdate',
+    empty: '기록 페이지에 체중을 2회 이상 적으면 그려진다',
+  });
+  $('wStart').textContent = st.weightFirst != null ? md(st.weightFirst, 1) : '73.5';
+  $('wNow').textContent = st.weightLast != null ? md(st.weightLast, 1) : '—';
+
+  DB.lineChart('chartNrs', {
+    series: [{ points: st.nrsSeries }, { points: st.nrsAmSeries, color: '--good', area: false }],
+    baseline: 3, yfmt: 'num:0', xfmt: 'kstdate',
+    empty: '세션 기록이 2회 이상 쌓이면 그려진다',
+  });
+  ['nw1', 'nw2', 'nw3'].forEach((id, i) => { $(id).textContent = md(st.nrsByWeek[i], 1); });
+
+  /* ── 표 ── */
+  DB.table('tblDays', P.days.map(x => {
+    const r = d.sessions[x.date] || {};
+    return {
+      date: x.date.slice(5).replace('-', '/') + ' ' + x.dow,
+      wk: x.week, theme: x.theme, rpe: x.rpe, kcal: x.kcal,
+      state: r.done ? '완료' : (x.date < st.today ? '미기록' : '예정'),
+    };
+  }), [
+    { key: 'date', label: '날짜' },
+    { key: 'wk', label: '주', num: true },
+    { key: 'theme', label: '세션' },
+    { key: 'rpe', label: 'RPE' },
+    { key: 'kcal', label: 'kcal', fmt: 'int', num: true },
+    { key: 'state', label: '상태', chip: { 완료: 'good', 미기록: 'warn', 예정: 'mute' } },
+  ]);
+  $('tblLabel').textContent = st.doneCount + ' / 15 완료';
+
+  /* ── 심박 구간 · 식단 ── */
+  $('zoneBox').innerHTML = P.zones.map(z =>
+    '<div class="zrow"><span class="zz">' + z.z + '</span><span>' + esc(z.name) + '</span>' +
+    '<span class="zb">' + esc(z.bpm) + ' bpm · ' + esc(z.pct) + '</span>' +
+    '<span class="zu">' + esc(z.use) + '</span></div>').join('');
+
+  $('dietBox').innerHTML = P.diet.map(x =>
+    '<dt>' + esc(x.k) + '</dt><dd>' + esc(x.v) + '<small>' + esc(x.why) + '</small></dd>').join('');
+
+  /* ── 저장소 상태를 상단 표시로 ── */
+  const src = $('dbSource');
+  if (!LOG.available()) {
+    src.dataset.state = 'error';
+    src.querySelector('.txt').textContent = '브라우저 저장 불가 — 계획만 표시';
+  } else if (st.hasData) {
+    src.dataset.state = 'live';
+    src.querySelector('.txt').textContent = '내 기록 · ' + (d.updated ? DB.fmt(d.updated, 'kst') : '');
+  } else {
+    src.querySelector('.txt').textContent = '기록 없음 · 계획만 표시';
+  }
+
+  DB.conversations('convRecent', null, window.DB_CONVERSATIONS, { limit: 5 });
+  DB.refresh();
+})();
+</script>
+</body>
+</html>

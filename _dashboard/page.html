@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko" data-root="..">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>〔페이지 제목〕 · 〔프로젝트 이름〕</title>
+<script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="dashboard.css">
+<!-- DASHBOARD.html 의 --accent 와 같은 값 -->
+<style>:root{--accent:#1F5F8B}</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <span class="proj" id="dbProject">〔프로젝트 이름〕</span>
+  <ul class="pages" id="dbPages"></ul>
+  <span class="spacer"></span>
+  <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
+</div>
+
+<header class="top">
+  <h1>〔페이지 제목〕</h1>
+  <span class="badge">〔종류 — 아키텍처 · 결정 기록 · 실험 결과〕</span>
+  <p class="lede">〔이 페이지가 무엇을 다루는지 한 문장. 관련 페이지: <a data-page="DASHBOARD.html">대시보드</a>, <a data-page="conversations.html">대화 기록</a>〕</p>
+  <div class="meta"><span>갱신 <b><time datetime="〔2026-01-01T10:00+09:00〕">〔2026-01-01 10:00 KST〕</time></b></span></div>
+</header>
+
+<!-- 패널은 DASHBOARD.html 과 같은 부품을 쓴다. 필요한 것만 남긴다. -->
+<section class="grid">
+  <div class="panel" data-span="8">
+    <div class="ph"><h2>〔섹션 1〕</h2></div>
+    <div class="pb prose">
+      <p>〔본문. 용어와 문서 코드는 terms.js 에 정의돼 있으면 그냥 쓰면 된다 — 예: S2에서 테스트넷 연결을 폴링으로 확인한다.〕</p>
+      <h3>〔소제목〕</h3>
+      <ul><li>〔…〕</li><li>〔…〕</li></ul>
+    </div>
+  </div>
+  <div class="panel" data-span="4">
+    <div class="ph"><h2>〔차트 또는 요약〕</h2><span class="label">〔단위〕</span></div>
+    <div class="pb tight"><div class="chart"><canvas id="chart1"></canvas></div></div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="12">
+    <div class="ph"><h2>〔표〕</h2></div>
+    <div class="pb tight" id="table1"></div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="12" id="glossary">
+    <div class="ph"><h2>용어집</h2></div>
+    <div class="pb"><dl class="glossary" id="glossaryList"></dl></div>
+  </div>
+</section>
+
+<footer><span>〔파일명〕.html</span><span>dashboard 스킬로 생성</span><span>로컬 파일</span></footer>
+</div>
+<script src="pages.js"></script>
+<script src="terms.js"></script>
+<script src="dashboard.js"></script>
+<script>
+(function(){
+  // 〔예시〕 막대 차트 + 표. 실제 값으로 바꾼다.
+  DB.barChart('chart1',{labels:['〔A〕','〔B〕','〔C〕','〔D〕'],values:[12,-4,8,15],yfmt:'int'});
+  DB.table('table1',[
+    {k:'〔행 1〕',v:1.2,s:'OK'},{k:'〔행 2〕',v:-0.4,s:'FAIL'},
+  ],[
+    {key:'k',label:'〔열〕'},{key:'v',label:'〔값〕',fmt:'sign:1',num:true,sign:true},{key:'s',label:'상태',chip:{OK:'good',FAIL:'bad'}},
+  ]);
+  DB.refresh();   // 새로 그린 표에도 용어/코드 툴팁
+})();
+</script>
+</body>
+</html>
