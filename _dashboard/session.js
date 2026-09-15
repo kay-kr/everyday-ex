@@ -48,16 +48,27 @@ window.DB_SESSION = (function () {
 
   /* 체크박스가 달린 블록 목록.
      items 만 체크 대상이다. notes(설명·규칙)와 rest(쉬는 법)에는 체크박스를 달지 않는다 —
-     "3개 중 실제로 할 것은 1개" 같은 혼동을 없애기 위해서다. */
+     "3개 중 실제로 할 것은 1개" 같은 혼동을 없애기 위해서다.
+
+     at:"home" 블록은 운동장이 아니라 집에서 하는 것이라 시각적으로 끊어 준다.
+     운동장에서 화면을 볼 때 "지금 여기까지"가 한눈에 보여야 하기 때문이다. */
+  const HOMESEP =
+    '<div class="homesep"><b>여기서부터는 집에서</b>' +
+    '<span>운동장에는 누울 자리가 없다. 바닥에 눕는 동작만 모아 둔 것이라, 오늘 운동장에서는 위까지 하고 끝낸다.</span></div>';
+
   function blocksHTML(day, rec, opts) {
     const s = (rec && rec.steps) || {};
     const ro = opts && opts.readonly;
+    let sepDone = false;
     return day.blocks.map((b, bi) => {
+      const home = b.at === 'home';
+      const sep = (home && !sepDone) ? (sepDone = true, HOMESEP) : '';
       const dn = b.items.filter((_, ii) => s[key(bi, ii)]).length;
       const full = dn === b.items.length;
       const notes = (b.notes || []).map(n => '<li>' + esc(n) + '</li>').join('');
-      return '<div class="blk' + (isMain(b.name) ? ' main' : '') + (full ? ' bdone' : '') + '">' +
+      return sep + '<div class="blk' + (home ? ' home' : (isMain(b.name) ? ' main' : '')) + (full ? ' bdone' : '') + '">' +
         '<b><span class="bname">' + esc(b.name) + '</span><span class="m">' + b.min + '분</span>' +
+        (home ? '<span class="bhome">집</span>' : '') +
         '<span class="bn">' + dn + '/' + b.items.length + '</span></b>' +
         '<ul class="checklist">' + b.items.map((it, ii) => {
           const k = key(bi, ii), on = !!s[k];

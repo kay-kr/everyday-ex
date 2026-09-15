@@ -133,6 +133,7 @@
         <dt>D6</dt><dd>식단은 건드리지 않음<small>본인이 선택한 방식이다. 대신 되돌리기 쉬운 3가지만 권장으로 둔다.</small></dd>
         <dt>D7</dt><dd>주 5일 고정<small>주말은 회복. 생활축구 경기를 뛴 주는 월요일 강도를 한 단계 내린다.</small></dd>
         <dt>D8</dt><dd>수요일은 축구 레슨으로 대체<small>무릎 때문에 빠져 있던 클럽 레슨에 복귀한다. 혼자 하던 인터벌·슛 블록은 레슨의 론도와 숏게임이 대신하므로 따로 넣지 않는다. 대신 강도를 내가 정할 수 없는 만큼 빠질 기준을 미리 정해 뒀다 — R7.</small></dd>
+        <dt>D9</dt><dd>바닥에 눕는 동작은 집에서<small>9/15 화요일에 운동장에서 직접 해 보니 누울 자리가 없었다. 클램쉘·글루트 브릿지·사이드 라잉 힙 앱덕션·데드버그·폼롤링을 각 세션 맨 아래 "귀가 후" 블록으로 옮겼다. 빼지 않고 옮긴 이유는 둔근과 코어가 이 플랜에서 무릎을 지키는 장치이기 때문이다. 운동장에는 서서 되는 대역(스탠딩 밴드 힙 앱덕션·킥백·한 발 서기)을 대신 넣었다 — R8.</small></dd>
       </dl>
     </div>
   </div>
@@ -147,6 +148,7 @@
         <li>R5 · 저녁 고강도는 수면을 방해한다. 수요일·금요일은 취침 3시간 전 종료.</li>
         <li>R6 · 야간 단독 운동. 휴대폰을 지참하고 조명이 있는 구역에서만 한다.</li>
         <li>R7 · 수요일 레슨은 강도를 내가 정하지 못한다. 숏게임 판수 상한(1회차 1판 → 2회차부터 남은 시간)과 "삐끗하면 그 자리에서 빠진다"를 미리 정해 두고, 다음날 아침 NRS로 판정한다.</li>
+        <li>R8 · 집에서 하는 블록은 빠뜨리기 쉽다. 운동장에서 끝났다는 느낌이 들기 때문이다. 대응은 셋이다 — 체크리스트에 그대로 남겨 진행바가 100%가 되지 않게 했고, 샤워 전에 하도록 시각을 못 박았고, 필요한 물건(매트·세라밴드)을 집에 두게 했다. 그래도 사흘 연속 빠지면 화요일 운동장 서킷을 한 라운드 늘려 보충한다.</li>
       </ul>
     </div>
   </div>
@@ -227,6 +229,7 @@
     <div class="ph"><h2>변경 이력</h2></div>
     <div class="pb">
       <ul class="history">
+        <li><time datetime="2026-09-15T09:10+09:00">09-15 09:10</time><span>운동장에서 눕는 동작이 안 되는 것을 확인 (D9 · R8) · 바닥 5동작을 세션 맨 아래 "귀가 후" 블록으로 분리 · 화요일 서킷을 운동장 6 + 집 4 로 재구성 · 서서 하는 대역 3동작 추가 · 제자리 볼터치 설명 구체화</span></li>
         <li><time datetime="2026-09-14T17:40+09:00">09-14 17:40</time><span>수요일을 축구 레슨으로 대체 (D8 · R7) · 날짜별 준비물 표시 · 블록마다 쉬는 법 명시 · 설명줄에서 체크박스 제거 · 묶음 이름 툴팁 추가</span></li>
         <li><time datetime="2026-09-14T16:50+09:00">09-14 16:50</time><span>오늘 카드 날짜가 안 나오던 오류 수정 · 세션 항목별 체크리스트 추가 · 갱신 시각을 실제 시각으로</span></li>
         <li><time datetime="2026-09-14T16:05+09:00">09-14 16:05</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
@@ -299,7 +302,8 @@
         '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
         '<span class="chip mute">약 ' + day.kcal + ' kcal</span>' +
         '<span class="chip mute">' + day.km.toFixed(1) + ' km</span>' +
-        '<span class="chip mute">' + window.DB_DAY_MIN(day) + '분</span>' +
+        '<span class="chip mute">운동장 ' + window.DB_DAY_MIN(day) + '분</span>' +
+        '<span class="chip mute home" title="귀가 후 집에서 하는 바닥 동작">집 ' + window.DB_HOME_MIN(day) + '분</span>' +
         todayStateBtn(day) +
       '</div>' +
       '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
@@ -410,6 +414,7 @@
     return {
       date: x.date.slice(5).replace('-', '/') + ' ' + x.dow,
       wk: x.week, theme: x.theme, rpe: x.rpe, kcal: x.kcal,
+      home: window.DB_HOME_MIN(x),
       state: r.done ? '완료' : (x.date < st.today ? '미기록' : '예정'),
     };
   }), [
@@ -418,6 +423,7 @@
     { key: 'theme', label: '세션' },
     { key: 'rpe', label: 'RPE' },
     { key: 'kcal', label: 'kcal', fmt: 'int', num: true },
+    { key: 'home', label: '집', fmt: 'int', num: true },
     { key: 'state', label: '상태', chip: { 완료: 'good', 미기록: 'warn', 예정: 'mute' } },
   ]);
   $('tblLabel').textContent = st.doneCount + ' / 15 완료';

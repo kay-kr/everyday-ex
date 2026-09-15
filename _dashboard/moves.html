@@ -30,6 +30,8 @@
 .mv .days{display:flex;flex-wrap:wrap;gap:.22rem;margin-top:.15rem}
 .mv .days a{font:600 .66rem var(--mono);background:var(--surface-2);color:var(--muted);border-radius:3px;padding:.08rem .3rem;text-decoration:none}
 .mv .days a:hover{background:var(--accent-soft);color:var(--accent)}
+/* 바닥에 눕는 동작 — 운동장에서 못 해 집에서 하는 것들 */
+.mv .wh{font:700 .62rem var(--mono);letter-spacing:.04em;color:var(--warn);background:var(--warn-soft);border-radius:99px;padding:.1rem .4rem;white-space:nowrap}
 .catline{display:flex;align-items:baseline;gap:.5rem;margin:.2rem 0 0}
 .catline h2{font-size:1.15rem}
 .search{margin:0 .9rem .2rem}
@@ -97,7 +99,7 @@
   ];
 
   /* 각 동작이 어느 날에 나오는지 찾는다 */
-  /* 줄여 쓴 묶음 이름("무릎 관리 5종" 등)까지 펼쳐서 센다 */
+  /* 줄여 쓴 묶음 이름("바닥 무릎 관리 4종" 등)까지 펼쳐서 센다 */
   const dayMap = new Map();
   for (const day of P.days) {
     const text = [day.theme].concat(day.blocks.map(b => b.name + ' ' + b.items.concat(b.notes || []).join(' ')));
@@ -106,7 +108,7 @@
       dayMap.get(m.k).push(day);
     }
   }
-  const fixedText = [].concat(P.fixed.warmup, P.fixed.cooldown).join(' ');
+  const fixedText = [].concat(P.fixed.warmup, P.fixed.cooldown, P.fixed.home || []).join(' ');
 
   function card(m) {
     const days = dayMap.get(m.k) || [];
@@ -118,7 +120,9 @@
       when = '<span class="days">' + shown + (days.length > 8 ? '<a href="plan.html">외 ' + (days.length - 8) + '일</a>' : '') + '</span>';
     }
     return '<div class="panel mv" data-span="4" id="' + window.DB_MOVE_ID(m) + '" data-cat="' + m.cat + '" data-find="' + esc((m.k + ' ' + (m.alias || []).join(' ') + ' ' + (m.en || '')).toLowerCase()) + '">' +
-      '<div class="ph"><h2>' + esc(m.k) + '</h2><span class="label en">' + esc(m.en || '') + '</span></div>' +
+      '<div class="ph"><h2>' + esc(m.k) + '</h2>' +
+        (m.where === 'home' ? '<span class="wh">집에서</span>' : '') +
+        '<span class="label en">' + esc(m.en || '') + '</span></div>' +
       '<div class="pb">' +
         '<p class="tip">' + esc(m.tip) + '</p>' +
         '<span class="lab">하는 순서</span>' +

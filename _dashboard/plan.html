@@ -180,7 +180,8 @@
         '<span>세션 <b>' + w.sessions + '</b></span>' +
         '<span>예상 소모 <b>' + w.kcal.toLocaleString() + '</b> kcal</span>' +
         '<span>이동거리 <b>' + w.km + '</b> km</span>' +
-        '<span>총 시간 <b>' + window.DB_WEEK_MIN(w.no) + '</b> 분</span>' +
+        '<span>운동장 <b>' + window.DB_WEEK_MIN(w.no) + '</b> 분</span>' +
+        '<span>집 <b>' + window.DB_WEEK_HOME_MIN(w.no) + '</b> 분</span>' +
         '<span>완료 <b class="wkdone" data-week="' + w.no + '">' + weekCount(w) + '</b></span>' +
       '</div>' +
       '<div class="done-when" style="margin-top:.5rem"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
@@ -200,7 +201,8 @@
           '<span class="chip mute">RPE ' + esc(x.rpe) + '</span>' +
           '<span class="chip mute">약 ' + x.kcal + ' kcal</span>' +
           '<span class="chip mute">' + x.km.toFixed(1) + ' km</span>' +
-          '<span class="chip mute">' + window.DB_DAY_MIN(x) + '분</span>' +
+          '<span class="chip mute">운동장 ' + window.DB_DAY_MIN(x) + '분</span>' +
+          '<span class="chip mute home" title="귀가 후 집에서 하는 바닥 동작">집 ' + window.DB_HOME_MIN(x) + '분</span>' +
         '</div>' +
         '<p class="hl">' + esc(x.headline) + '</p>' +
         SES.gearHTML(x, P.fixed) +
