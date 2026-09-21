@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>3주 루틴 · 평일 저녁 축구 트레이닝</title>
+<title>3주 루틴 · 저녁 트레이닝</title>
 <script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -39,15 +39,21 @@
 .movelist em{display:block;color:var(--bad);font-size:.82rem;font-style:normal;margin-top:.1rem}
 .movecat{display:block;font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.55rem 0 .1rem;border-bottom:1px solid var(--line-2);padding-bottom:.12rem}
 .movecat b{color:var(--accent)}
-.movelist i{font:500 .78rem var(--mono);font-style:normal;color:var(--muted);margin-left:.4rem}
 .moveall{margin:.4rem 0 0;font-size:.85rem}
+.ldrtbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.ldrtbl th{font:600 .66rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.35rem .4rem;border-bottom:1px solid var(--line-2)}
+.ldrtbl td{padding:.3rem .4rem;border-bottom:1px solid var(--line);vertical-align:top}
+.ldrtbl td:first-child{font:600 .78rem var(--mono);color:var(--muted);white-space:nowrap}
+.ldrtbl tr[data-wk] td{background:var(--accent-soft)}
+.ldrtbl tr[data-wk] td:first-child{color:var(--accent)}
+.ldrtbl .wkmark{font:600 .64rem var(--mono);color:var(--accent);margin-left:.3rem}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div class="topbar">
-  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <span class="proj" id="dbProject">저녁 트레이닝</span>
   <ul class="pages" id="dbPages"></ul>
   <span class="spacer"></span>
   <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
@@ -55,34 +61,36 @@
 
 <header class="top">
   <h1>3주 루틴 전체</h1>
-  <span class="badge">15세션 · 평일 50분 + 수요일 레슨</span>
-  <p class="lede">2026년 9월 14일부터 10월 2일까지, 평일 저녁 15개 세션의 전 내용이다. 요일마다 성격이 고정되어 있고 주차가 올라갈수록 같은 요일의 양이 늘어난다. 수요일은 혼자 하는 운동이 아니라 클럽 축구 레슨이다 (D8). 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 세션 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
-  <div class="meta"><span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span></div>
+  <span class="badge">집 21일 · 운동장 6회</span>
+  <p class="lede">이 플랜은 두 갈래다. <b>집 근력 루틴</b>은 날짜가 있고 매일 하며, <b>운동장 세션</b>은 날짜가 없고 그 주에 두 번 나가면 된다. 아래는 주차별로 집 루틴 한 벌과 운동장 두 자리를 나란히 놓은 것이다. 오늘 것만 보려면 <a data-page="DASHBOARD.html">대시보드</a>, 통증이 생기면 <a data-page="knee.html">무릎 관리</a>, 끝나고 적는 곳은 <a data-page="log.html">기록</a>. 동작 이름만 보고 무엇을 해야 할지 모르겠으면 각 카드 아래의 <b>이 세션에 나오는 동작</b>을 펼치거나 <a data-page="moves.html">동작 사전</a>을 보면 된다.</p>
+  <div class="meta"><span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span><span>기간 <b id="hdRange">—</b></span></div>
 </header>
 
-<!-- ── 요일 설계 · 공통 루틴 ── -->
+<!-- ── 구조 · 공통 루틴 ── -->
 <section class="grid">
   <div class="panel" data-span="5">
-    <div class="ph"><h2>요일별 성격</h2><span class="label">3주 내내 고정</span></div>
+    <div class="ph"><h2>이 플랜의 구조</h2><span class="label">요일이 아니라 자리로 센다</span></div>
     <div class="pb">
       <dl class="kv">
-        <dt>월</dt><dd>리셋 &amp; Zone2<small>주말을 지나고 다시 시동을 거는 날. 유산소 위주에 볼 감각을 얹는다. 무릎 부담이 가장 낮다.</small></dd>
-        <dt>화</dt><dd>근력 &amp; 무릎 재건<small>둔근과 대퇴사두근을 만드는 날. 달리기는 거의 없고 계단 벽으로 패스를 한다.</small></dd>
-        <dt>수</dt><dd>축구 레슨<small>클럽 레슨에 복귀한다. 론도 30분 · 기본기 10분 · 기본 패턴 20분 · 응용 패턴 20분 · 숏게임. 그 주의 칼로리 최대일이자 무릎 위험이 가장 높은 날이다 (R7).</small></dd>
-        <dt>목</dt><dd>기술 &amp; 모빌리티<small>레슨 다음날이다. 액티브 리커버리를 겸한 회복일로, 드리블과 저글링 위주로 숨이 덜 차게 한다.</small></dd>
-        <dt>금</dt><dd>통합 서킷<small>공과 달리기를 묶은 서킷 + 연속 조깅 측정. 한 주를 숫자로 마감한다.</small></dd>
+        <dt>매일</dt><dd>집 근력 루틴 15~20분<small>① 준비 → ② 밀기(푸시업) → ③ 당기기(철봉) → ④ 코어 → ⑤ 둔근 → ⑥ 마무리. 여섯 칸은 3주 내내 고정이고 칸 안의 숫자만 한 단계씩 움직인다. 주말에도 한다.</small></dd>
+        <dt>주 2회</dt><dd>운동장 50분<small>대략 월·목쯤이지만 요일은 정하지 않는다. 그 주에 <b>1/2</b>과 <b>2/2</b> 두 자리가 있고, 나가는 날에 남은 자리를 하나 쓴다. 두 번 사이에 하루 이상은 비운다.</small></dd>
+        <dt>1/2</dt><dd>달리기 중심<small>워크-런 또는 연속 조깅 + 볼 감각 · 컷팅. 이 플랜에서 칼로리를 태우는 자리다.</small></dd>
+        <dt>2/2</dt><dd>근력 · 볼 중심<small>서서 하는 무릎 재건 서킷 + 벽 패스 · 드리블 + 마지막에 연속 조깅 측정. 3주차 2/2 은 테스트 날이다.</small></dd>
+        <dt>빠진 것</dt><dd>수요일 축구 레슨<small>언제 나갈지 정할 수 없어 이 플랜에서 뺐다 (D8). 나가게 되면 그날은 운동장 한 자리를 쓴 것으로 치고, 집에 와서 집 루틴만 채운다.</small></dd>
       </dl>
     </div>
   </div>
   <div class="panel" data-span="4">
-    <div class="ph"><h2>매 세션 공통</h2><span class="label">각 날 루틴에는 줄여서 적혀 있다</span></div>
+    <div class="ph"><h2>운동장 세션 공통</h2><span class="label">각 세션에는 줄여서 적혀 있다</span></div>
     <div class="pb">
       <span class="label">동적 모빌리티 세트 (워밍업)</span>
       <ul class="rules" id="wuList" style="margin-top:.25rem"></ul>
       <span class="label" style="display:block;margin-top:.6rem">쿨다운</span>
       <ul class="rules" id="cdList" style="margin-top:.25rem"></ul>
-      <span class="label" style="display:block;margin-top:.6rem">매일 챙기는 준비물</span>
+      <span class="label" style="display:block;margin-top:.6rem">운동장에 챙겨 가는 것</span>
       <div class="gearbox" id="gearAlways" style="margin-top:.25rem"></div>
+      <span class="label" style="display:block;margin-top:.6rem">집에 두고 쓰는 것</span>
+      <div class="gearbox" id="gearHome" style="margin-top:.25rem"></div>
     </div>
   </div>
   <div class="panel" data-span="3">
@@ -95,26 +103,42 @@
   </div>
 </section>
 
-<!-- ── 주차별 세션 (JS 생성) ── -->
+<!-- ── 집 루틴이 3주 동안 어떻게 올라가는가 ── -->
+<section class="grid">
+  <div class="panel" data-span="12" id="home">
+    <div class="ph"><h2>집 근력 루틴 · 3주 동안 올리는 것</h2><span class="label">올리는 것은 한 주에 하나씩뿐이다 (D11 · D12)</span></div>
+    <div class="pb">
+      <p style="color:var(--ink-2);margin-bottom:.6rem" id="homeIntro"></p>
+      <div class="tbl-wrap"><table class="ldrtbl" id="ladders"></table></div>
+      <p style="color:var(--muted);font-size:.87rem;margin-top:.7rem" id="homeAfter"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 주차별 (JS 생성) ── -->
 <div id="weeks"></div>
 
 <!-- ── 테스트 ── -->
 <section class="grid">
   <div class="panel" data-span="12" id="tests">
-    <div class="ph"><h2>3주차 마지막 날 테스트 4종</h2><span class="label">10월 2일 금요일 · 입력은 <a data-page="log.html#tests">기록</a> 페이지</span></div>
+    <div class="ph"><h2>3주차 마지막 운동장 세션의 테스트 4종</h2><span class="label">3주차 2/2 · 입력은 <a data-page="log.html#tests">기록</a> 페이지</span></div>
     <div class="pb prose">
       <p>측정은 다음 3주를 어떻게 짤지 정하기 위한 것이지 성적표가 아니다. 네 가지가 서로 다른 것을 본다 — T1은 심폐, T2는 볼 감각, T3은 무릎을 버티는 근력, T4는 민첩성이다. 순서대로 하고 사이에 3분씩 쉰다.</p>
       <ul>
-        <li><b>T1 · 12분 달리기</b> — 러닝트랙에서 12분 동안 최대한 멀리. 걷기를 섞어도 되고 총 거리만 m 단위로 적는다. 1주차 금요일의 연속 조깅 8분 거리와 비교한다.</li>
+        <li><b>T1 · 12분 달리기</b> — 러닝트랙에서 12분 동안 최대한 멀리. 걷기를 섞어도 되고 총 거리만 m 단위로 적는다. 1주차 2/2 세션의 연속 조깅 8분 거리와 비교한다.</li>
         <li><b>T2 · 60초 벽 원터치 패스</b> — 계단 벽에서 5m 떨어져 원터치 인사이드 패스로 1분간 몇 번을 주고받는지 센다. 공이 벽을 맞고 돌아온 것만 1회로 친다.</li>
         <li><b>T3 · 벽 스쿼트 버티기</b> — 벽에 등을 대고 무릎 60도로 버틴 시간(초). 통증 NRS가 3을 넘는 순간 멈추고 그때까지의 시간을 적는다. 참고 버티면 측정값이 아니라 부상이 된다.</li>
         <li><b>T4 · 드리블 코스 20m 왕복</b> — 마커 4개를 5m 간격으로 놓고 지그재그로 돌아 왕복한 시간(초). 공을 놓치면 그 자리에서 다시 잡고 계속한다.</li>
       </ul>
+      <h3>집 루틴 쪽은 무엇으로 재는가</h3>
+      <p>따로 테스트 날을 잡지 않는다. 3주차 마지막 날에 <b>푸시업이 사다리 몇 단계였는지</b>와 <b>철봉을 몇 초 버텼는지</b> 두 줄을 기록 메모에 적으면 그것이 측정이다. 매일 하는 운동에 측정일을 따로 만들면 그날만 무리하게 되고, 그러면 다음날 루틴이 끊긴다.</p>
       <h3>이 숫자로 무엇을 정하는가</h3>
       <ul>
-        <li>T1이 늘고 무릎 NRS 평균이 2 이하 → 4주차부터 연속 달리기를 20분으로 늘리고 컷팅 속도를 푼다.</li>
-        <li>T1은 늘었는데 NRS가 3 이상 → 유산소는 유지하고 근력 블록을 하나 더 넣는다. 슛은 다시 줄인다.</li>
+        <li>T1이 늘고 무릎 NRS 평균이 2 이하 → 4~6주차에 운동장을 주 2회로 두되 연속 달리기를 15분으로 늘린다.</li>
+        <li>T1은 늘었는데 NRS가 3 이상 → 달리기를 유지하고 2/2 세션의 서킷 라운드를 하나 더 넣는다.</li>
         <li>T3이 60초를 넘으면 → 4주차에 계단 하강을 아주 낮은 단계로 처음 시도해 본다.</li>
+        <li>푸시업이 3단계(무릎)에서 8회가 되면 → 4주차에 4단계(아주 낮은 인클라인)로 올린다.</li>
+        <li>철봉 20초 × 3이 편해지면 → 네거티브를 5초 × 5로 올리고, 거기서 4~6주 뒤에 풀업 1회를 시도한다.</li>
         <li>체중이 3주간 그대로면 → 운동이 아니라 식단 쪽을 손봐야 한다는 신호다. D6을 다시 꺼내 이야기한다.</li>
       </ul>
     </div>
@@ -143,54 +167,80 @@
   const d = LOG.load(), today = LOG.todayKey();
   const canSave = LOG.available();
   const SES = window.DB_SESSION;
+  const st = LOG.stats(d, P);
+  const short = k => k.slice(5).replace('-', '/');
 
-  /* ── 완료 여부 ──
-     상태는 기록 페이지와 같은 저장소를 본다. 여기서 누르면 거기에도 바로 반영된다. */
-  const LABEL = { done: '완료', today: '오늘', missed: '미기록', todo: '예정' };
-  const stateOf = x => (d.sessions[x.date] || {}).done ? 'done'
-    : x.date === today ? 'today'
-    : x.date < today ? 'missed' : 'todo';
-
-  const stateBtn = x => {
-    const st = stateOf(x);
-    return '<button class="dstate" type="button" data-date="' + x.date + '" data-state="' + st + '"' +
-      ' aria-pressed="' + (st === 'done') + '"' +
-      (canSave ? ' title="눌러서 완료 여부를 바꾼다"' : ' disabled title="이 브라우저는 저장을 막고 있어 바꿀 수 없다"') +
-      '>' + LABEL[st] + '</button>';
-  };
-  const weekCount = w => {
-    const ds = P.days.filter(x => x.week === w.no);
-    return ds.filter(x => (d.sessions[x.date] || {}).done).length + ' / ' + ds.length;
-  };
+  $('hdRange').textContent = short(P.start) + ' ~ ' + short(window.DB_DATE_OF(P.days));
 
   $('wuList').innerHTML = P.fixed.warmup.map(x => '<li>' + esc(x) + '</li>').join('');
   $('cdList').innerHTML = P.fixed.cooldown.map(x => '<li>' + esc(x) + '</li>').join('');
   $('evList').innerHTML = P.fixed.everyday.map(x => '<li>' + esc(x) + '</li>').join('');
   $('restList').innerHTML = P.fixed.restRules.map(x => '<li>' + esc(x) + '</li>').join('');
-  $('gearAlways').innerHTML = '<span class="label">언제나</span>' +
-    P.fixed.gearAlways.map(x => '<span class="chip mute">' + esc(x) + '</span>').join('');
+  $('gearAlways').innerHTML = P.fixed.gearAlways.map(x => '<span class="chip mute">' + esc(x) + '</span>').join('');
+  $('gearHome').innerHTML = P.fixed.gearHome.map(x => '<span class="chip accent">' + esc(x) + '</span>').join('');
 
-  $('weeks').innerHTML = P.weeks.filter(w => w.sessions).map(w => {
-    const days = P.days.filter(x => x.week === w.no);
+  /* ── 사다리 표 ── 어느 칸이 몇 주차인지 표시해 둔다 */
+  $('homeIntro').textContent = P.home.intro;
+  $('homeAfter').textContent = P.home.after;
+  const WK = { 푸시업: { 1: 1, 2: 2, 3: 3 }, 철봉: { 1: 1, 2: 2, 3: 3 } };
+  $('ladders').innerHTML = P.home.ladders.map(L => {
+    const mark = {};
+    Object.entries(WK[L.k] || {}).forEach(([w, i]) => { mark[i] = w; });
+    return '<thead><tr><th colspan="2">' + esc(L.k) + ' · ' + esc(L.unit) + '</th><th>메모</th></tr></thead><tbody>' +
+      L.steps.map((s, i) => '<tr' + (mark[i] ? ' data-wk="' + mark[i] + '"' : '') + '>' +
+        '<td>' + esc(s.s) + (mark[i] ? '<span class="wkmark">' + mark[i] + '주차</span>' : '') + '</td>' +
+        '<td>' + esc(s.v) + '</td><td style="color:var(--muted)">' + esc(s.d) + '</td></tr>').join('') +
+      '<tr><td>올릴 때</td><td colspan="2" style="color:var(--ink-2)">' + esc(L.up) + '</td></tr>' +
+      '<tr><td>내릴 때</td><td colspan="2" style="color:var(--ink-2)">' + esc(L.down) + '</td></tr>' +
+      '</tbody>';
+  }).join('');
+
+  /* ── 주차별 ── 집 루틴 한 벌 + 운동장 두 자리 ── */
+  const LABEL = { done: '완료', todo: '예정' };
+  const fieldState = x => (d.field[x.id] || {}).done ? 'done' : 'todo';
+
+  $('weeks').innerHTML = P.weeks.filter(w => w.field).map(w => {
+    const hw = window.DB_HOME_OF(w.no);
+    const fs = window.DB_FIELD_OF(w.no);
+    const wdates = st.dates.filter(k => window.DB_WEEK_NO(k) === w.no);
+    const hdone = wdates.filter(k => (d.sessions[k] || {}).done).length;
+    const fdone = fs.filter(x => (d.field[x.id] || {}).done).length;
+
     const head =
       '<section class="grid"><div class="panel" data-span="12" id="w' + w.no + '">' +
       '<div class="ph"><h2>' + w.id + ' · ' + esc(w.title) + '</h2><span class="label">' + esc(w.range) + '</span></div>' +
       '<div class="pb"><p style="color:var(--ink-2);margin-bottom:.45rem">' + esc(w.goal) + '</p>' +
       '<div class="wsum">' +
-        '<span>세션 <b>' + w.sessions + '</b></span>' +
+        '<span>집 루틴 <b>' + window.DB_HOME_MIN(hw) + '</b> 분 × 7일</span>' +
+        '<span>운동장 <b>' + window.DB_WEEK_FIELD_MIN(w.no) + '</b> 분 (2회)</span>' +
         '<span>예상 소모 <b>' + w.kcal.toLocaleString() + '</b> kcal</span>' +
         '<span>이동거리 <b>' + w.km + '</b> km</span>' +
-        '<span>운동장 <b>' + window.DB_WEEK_MIN(w.no) + '</b> 분</span>' +
-        '<span>집 <b>' + window.DB_WEEK_HOME_MIN(w.no) + '</b> 분</span>' +
-        '<span>완료 <b class="wkdone" data-week="' + w.no + '">' + weekCount(w) + '</b></span>' +
+        '<span>집 <b class="wkdone" data-week="' + w.no + '">' + hdone + ' / ' + wdates.length + '</b></span>' +
+        '<span>운동장 <b class="wkfield" data-week="' + w.no + '">' + fdone + ' / ' + fs.length + '</b></span>' +
       '</div>' +
       '<div class="done-when" style="margin-top:.5rem"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
       '</div></div></section>';
 
-    const cards = '<section class="grid">' + days.map(x => {
-      return '<div class="panel" data-span="4" id="' + x.id + '">' +
-        '<div class="ph"><h2>' + x.dow + '요일</h2>' +
-          '<span class="label">' + x.date.slice(5).replace('-', '/') + '</span>' + stateBtn(x) +
+    /* 집 루틴 카드 — 날짜가 여럿이라 체크는 붙이지 않는다. 체크는 대시보드의 오늘 카드에서 한다. */
+    const homeCard = '<section class="grid"><div class="panel" data-span="12" id="h' + w.no + '">' +
+      '<div class="ph"><h2>매일 · 집 근력 루틴</h2><span class="label">' + esc(w.range) + ' 7일 내내 같다 · ' + window.DB_HOME_MIN(hw) + '분</span></div>' +
+      '<div class="pb">' +
+      '<div class="dhead"><span class="dd">W' + w.no + '</span><span class="dt">' + esc(hw.theme) + '</span></div>' +
+      '<p class="hl">' + esc(hw.headline) + '</p>' +
+      SES.blocksHTML(hw, null, { readonly: true }) +
+      '<p class="afterbox"><b>체크는</b>날마다 달라지므로 여기서는 하지 않는다. 오늘 것은 <a href="../DASHBOARD.html">대시보드</a>에서 체크한다.</p>' +
+      window.DB_MOVES_PANEL(hw, '') +
+      '</div></div></section>';
+
+    const cards = '<section class="grid">' + fs.map(x => {
+      const fr = d.field[x.id] || {};
+      const stt = fieldState(x);
+      return '<div class="panel" data-span="6" id="' + x.id + '">' +
+        '<div class="ph"><h2>운동장 ' + x.slotLabel + '</h2>' +
+          '<span class="label">' + esc(x.focus) + ' 중심 · ' + window.DB_FIELD_MIN(x) + '분</span>' +
+          '<button class="dstate" type="button" data-fid="' + x.id + '" data-state="' + stt + '" aria-pressed="' + (stt === 'done') + '"' +
+          (canSave ? ' title="나갔다 온 날 눌러 완료로 바꾼다"' : ' disabled title="이 브라우저는 저장을 막고 있어 바꿀 수 없다"') +
+          '>' + LABEL[stt] + '</button>' +
         '</div>' +
         '<div class="pb">' +
         '<div class="dhead">' +
@@ -201,55 +251,58 @@
           '<span class="chip mute">RPE ' + esc(x.rpe) + '</span>' +
           '<span class="chip mute">약 ' + x.kcal + ' kcal</span>' +
           '<span class="chip mute">' + x.km.toFixed(1) + ' km</span>' +
-          '<span class="chip mute">운동장 ' + window.DB_DAY_MIN(x) + '분</span>' +
-          '<span class="chip mute home" title="귀가 후 집에서 하는 바닥 동작">집 ' + window.DB_HOME_MIN(x) + '분</span>' +
+          (fr.at ? '<span class="chip good">' + short(fr.at) + ' 수행</span>' : '') +
         '</div>' +
         '<p class="hl">' + esc(x.headline) + '</p>' +
         SES.gearHTML(x, P.fixed) +
-        SES.progressHTML(x, d.sessions[x.date], { readonly: !canSave }) +
-        SES.blocksHTML(x, d.sessions[x.date], { readonly: !canSave }) +
+        SES.progressHTML(x, fr, { readonly: !canSave }) +
+        SES.blocksHTML(x, fr, { readonly: !canSave }) +
         '<div class="banlist"><span class="label">금지</span>' +
           x.ban.map(v => '<span class="chip">' + esc(v) + '</span>').join('') + '</div>' +
+        SES.afterHTML(x, '#home') +
         window.DB_MOVES_PANEL(x, '') +
         '</div></div>';
     }).join('') + '</section>';
-    return head + cards;
+
+    return head + homeCard + cards;
   }).join('');
 
-  /* 상태 버튼을 누르면 저장하고 화면의 상태 표시만 다시 그린다 */
+  /* 상태 버튼 */
   $('weeks').addEventListener('click', e => {
     const btn = e.target.closest('.dstate');
-    if (!btn || btn.disabled) return;
-    const date = btn.dataset.date;
-    const rec = d.sessions[date] || (d.sessions[date] = {});
-    rec.done = !rec.done;
+    if (!btn || btn.disabled || !btn.dataset.fid) return;
+    const r = d.field[btn.dataset.fid] || (d.field[btn.dataset.fid] = {});
+    r.done = !r.done;
+    if (r.done && !r.at) r.at = today; else if (!r.done) delete r.at;
     if (!LOG.save(d)) { btn.disabled = true; btn.title = '저장하지 못했다'; return; }
     redrawStates();
   });
 
-  /* 카드마다 체크리스트를 연결한다. 그 카드 안의 진행 표시만 갱신하고 전체를 다시 그리지 않는다. */
+  /* 운동장 카드마다 체크리스트를 연결한다. 집 루틴 카드는 읽기 전용이다. */
   if (canSave) {
-    for (const x of P.days) {
+    for (const x of P.field) {
       const card = document.getElementById(x.id);
       if (!card) continue;
-      SES.wire(card, x, () => d.sessions[x.date] || (d.sessions[x.date] = {}), (rec) => {
+      SES.wire(card, x, () => d.field[x.id] || (d.field[x.id] = {}), (r) => {
+        if (r.done && !r.at) r.at = today;
         if (!LOG.save(d)) return;
-        SES.sync(card, x, rec);
+        SES.sync(card, x, r);
         redrawStates();
       });
     }
   }
 
   function redrawStates() {
-    for (const b of document.querySelectorAll('.dstate')) {
-      const x = P.days.find(v => v.date === b.dataset.date);
-      const st = stateOf(x);
-      b.dataset.state = st;
-      b.textContent = LABEL[st];
-      b.setAttribute('aria-pressed', st === 'done');
+    for (const b of document.querySelectorAll('.dstate[data-fid]')) {
+      const x = P.field.find(v => v.id === b.dataset.fid);
+      const s = fieldState(x);
+      b.dataset.state = s;
+      b.textContent = LABEL[s];
+      b.setAttribute('aria-pressed', s === 'done');
     }
-    for (const el of document.querySelectorAll('.wkdone')) {
-      el.textContent = weekCount(P.weeks[+el.dataset.week - 1]);
+    for (const el of document.querySelectorAll('.wkfield')) {
+      const fs = window.DB_FIELD_OF(+el.dataset.week);
+      el.textContent = fs.filter(x => (d.field[x.id] || {}).done).length + ' / ' + fs.length;
     }
   }
 

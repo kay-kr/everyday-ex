@@ -1,8 +1,9 @@
 /* 세션을 하나씩 체크해 가며 수행하기 위한 부품.
-   DASHBOARD.html 의 오늘 카드와 plan.html 의 15개 카드가 같은 것을 쓴다.
+   대시보드의 오늘 카드(집 루틴)와 plan.html 의 카드들이 같은 것을 쓴다.
 
-   저장 위치는 기록과 같은 곳이다 — sessions[날짜].steps = { "블록-항목": true }
+   저장 위치는 기록과 같은 곳이다 — steps = { "블록-항목": true }
    예) "1-0" 은 두 번째 블록의 첫 항목.
+   집 루틴은 sessions[날짜].steps 에, 운동장 세션은 field[슬롯id].steps 에 들어간다.
 
    완료 처리 규칙: 마지막 항목을 체크하면 그 세션이 자동으로 완료된다.
    체크를 풀어도 완료는 유지한다 — 실수로 하나 눌렀다고 완료가 취소되면 곤란하기 때문이다.
@@ -12,7 +13,8 @@ window.DB_SESSION = (function () {
   'use strict';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const key = (bi, ii) => bi + '-' + ii;
-  const isMain = name => /메인|테스트|신규|레슨/.test(name);
+  /* 초록 세로줄이 붙는 블록. 워밍업 · 준비 · 마무리 · 쿨다운을 뺀 나머지가 그날의 본론이다. */
+  const isMain = name => /메인|테스트|밀기|당기기|코어|둔근/.test(name);
 
   const total = day => day.blocks.reduce((a, b) => a + b.items.length, 0);
 
@@ -48,27 +50,16 @@ window.DB_SESSION = (function () {
 
   /* 체크박스가 달린 블록 목록.
      items 만 체크 대상이다. notes(설명·규칙)와 rest(쉬는 법)에는 체크박스를 달지 않는다 —
-     "3개 중 실제로 할 것은 1개" 같은 혼동을 없애기 위해서다.
-
-     at:"home" 블록은 운동장이 아니라 집에서 하는 것이라 시각적으로 끊어 준다.
-     운동장에서 화면을 볼 때 "지금 여기까지"가 한눈에 보여야 하기 때문이다. */
-  const HOMESEP =
-    '<div class="homesep"><b>여기서부터는 집에서</b>' +
-    '<span>운동장에는 누울 자리가 없다. 바닥에 눕는 동작만 모아 둔 것이라, 오늘 운동장에서는 위까지 하고 끝낸다.</span></div>';
-
+     "3개 중 실제로 할 것은 1개" 같은 혼동을 없애기 위해서다. */
   function blocksHTML(day, rec, opts) {
     const s = (rec && rec.steps) || {};
     const ro = opts && opts.readonly;
-    let sepDone = false;
     return day.blocks.map((b, bi) => {
-      const home = b.at === 'home';
-      const sep = (home && !sepDone) ? (sepDone = true, HOMESEP) : '';
       const dn = b.items.filter((_, ii) => s[key(bi, ii)]).length;
       const full = dn === b.items.length;
       const notes = (b.notes || []).map(n => '<li>' + esc(n) + '</li>').join('');
-      return sep + '<div class="blk' + (home ? ' home' : (isMain(b.name) ? ' main' : '')) + (full ? ' bdone' : '') + '">' +
+      return '<div class="blk' + (isMain(b.name) ? ' main' : '') + (full ? ' bdone' : '') + '">' +
         '<b><span class="bname">' + esc(b.name) + '</span><span class="m">' + b.min + '분</span>' +
-        (home ? '<span class="bhome">집</span>' : '') +
         '<span class="bn">' + dn + '/' + b.items.length + '</span></b>' +
         '<ul class="checklist">' + b.items.map((it, ii) => {
           const k = key(bi, ii), on = !!s[k];
@@ -134,5 +125,13 @@ window.DB_SESSION = (function () {
     return p;
   }
 
-  return { key, total, progress, progressHTML, blocksHTML, gearHTML, wire, sync };
+  /* 운동장 세션 맨 아래에 붙는 "집에 와서 할 것" 한 줄.
+     바닥 동작이 전부 집 루틴으로 옮겨 갔기 때문에, 운동장에서 끝났다고 하루가 끝난 것이 아니다. */
+  function afterHTML(day, href) {
+    if (!day.after) return '';
+    return '<p class="afterbox"><b>집에 와서</b>' + esc(day.after) +
+      (href ? ' <a href="' + href + '">오늘의 집 루틴 →</a>' : '') + '</p>';
+  }
+
+  return { key, total, progress, progressHTML, blocksHTML, gearHTML, afterHTML, wire, sync };
 })();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>동작 사전 · 평일 저녁 축구 트레이닝</title>
+<title>동작 사전 · 저녁 트레이닝</title>
 <script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -41,7 +41,7 @@
 <div class="wrap">
 
 <div class="topbar">
-  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <span class="proj" id="dbProject">저녁 트레이닝</span>
   <ul class="pages" id="dbPages"></ul>
   <span class="spacer"></span>
   <button class="theme" id="themeBtn" type="button" aria-label="테마 전환"><span class="ico">◐</span><span class="txt">테마: 시스템</span></button>
@@ -50,7 +50,7 @@
 <header class="top">
   <h1>동작 사전</h1>
   <span class="badge accent" id="mvCount">—</span>
-  <p class="lede">이 플랜에 나오는 모든 동작을 어떻게 하는지 적어 두었다. 루틴에서 이름만 보고 무엇을 해야 할지 모르겠으면 여기를 찾으면 된다. 각 날에 어떤 동작이 나오는지는 <a data-page="plan.html">3주 루틴</a>의 세션마다 붙어 있는 동작 목록에서도 볼 수 있다. 무릎 관련 주의는 <a data-page="knee.html">무릎 관리</a>와 같은 기준이다.</p>
+  <p class="lede">이 플랜에 나오는 모든 동작을 어떻게 하는지 적어 두었다. 루틴에서 이름만 보고 무엇을 해야 할지 모르겠으면 여기를 찾으면 된다. 어느 루틴에 나오는지는 카드마다 붙어 있고, <a data-page="plan.html">3주 루틴</a>의 세션마다 있는 동작 목록에서도 볼 수 있다. <b>집 근력 루틴 (매일)</b> 묶음이 이번에 새로 들어온 것들이다. 무릎 관련 주의는 <a data-page="knee.html">무릎 관리</a>와 같은 기준이다.</p>
   <div class="meta">
     <span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span>
     <span>읽는 법 <b>파란 줄 = 순서 · 노란 줄 = 자세 요령 · 빨간 줄 = 무릎 주의</b></span>
@@ -92,32 +92,36 @@
     { id: 'basic', t: '발의 부위', d: '패스와 슛의 이름이 여기서 나온다. 먼저 읽으면 나머지가 쉬워진다.' },
     { id: 'warm', t: '워밍업 · 모빌리티', d: '매 세션 앞 10분. 늘리는 것이 아니라 움직이며 깨우는 동작들이다.' },
     { id: 'run', t: '달리기', d: '이 플랜에서 칼로리를 태우는 주력. 속도보다 끊지 않는 것이 목표다.' },
-    { id: 'strength', t: '근력 · 무릎 재활', d: '전부 무릎을 거의 굽히지 않고 엉덩이와 허벅지를 쓰는 동작으로 골랐다.' },
+    { id: 'strength', t: '근력 · 무릎 재활', d: '전부 무릎을 거의 굽히지 않고 엉덩이와 허벅지를 쓰는 동작으로 골랐다. 운동장 2/2 세션에서 선 채로 한다.' },
+    { id: 'home', t: '집 근력 루틴 (매일)', d: '매일 15~20분 집에서 하는 것들이다. 푸시업과 철봉은 횟수가 아니라 단계로 올린다 — 단계표는 3주 루틴 페이지에 있다.' },
     { id: 'ball', t: '볼 기술', d: '공 하나와 계단 벽 · 그물 월만으로 할 수 있는 것들이다.' },
-    { id: 'lesson', t: '수요일 레슨', d: '레슨에서 실제로 하는 순서 그대로다. 강도를 내가 정하지 못하는 구간이라 무릎 주의를 특히 자세히 적었다.' },
+    { id: 'lesson', t: '레슨 · 경기 (이 플랜 밖)', d: '수요일 클럽 레슨은 언제 나갈지 정할 수 없어 플랜에서 뺐다 (D8). 나가게 되는 날을 위해 설명만 남겨 두었다.' },
     { id: 'cool', t: '쿨다운 · 스트레칭', d: '끝나고 5분. 운동 전에 하지 않고 반드시 끝나고 한다.' },
   ];
 
   /* 각 동작이 어느 날에 나오는지 찾는다 */
   /* 줄여 쓴 묶음 이름("바닥 무릎 관리 4종" 등)까지 펼쳐서 센다 */
+  /* 어디에 나오는가 — 집 루틴 3주차 + 운동장 6세션을 한 줄로 만들어 훑는다 */
+  const SRC = P.home.weeks.map(h => ({ id: 'h' + h.no, label: h.no + '주차 집', href: 'plan.html#h' + h.no, blocks: h.blocks, theme: h.theme }))
+    .concat(P.field.map(x => ({ id: x.id, label: x.week + '주차 ' + x.slotLabel, href: 'plan.html#' + x.id, blocks: x.blocks, theme: x.theme })));
   const dayMap = new Map();
-  for (const day of P.days) {
+  for (const day of SRC) {
     const text = [day.theme].concat(day.blocks.map(b => b.name + ' ' + b.items.concat(b.notes || []).join(' ')));
     for (const m of window.DB_MOVES_FIND(text)) {
       if (!dayMap.has(m.k)) dayMap.set(m.k, []);
       dayMap.get(m.k).push(day);
     }
   }
-  const fixedText = [].concat(P.fixed.warmup, P.fixed.cooldown, P.fixed.home || []).join(' ');
+  const fixedText = [].concat(P.fixed.warmup, P.fixed.cooldown).join(' ');
 
   function card(m) {
     const days = dayMap.get(m.k) || [];
     const inFixed = [m.k].concat(m.alias || []).some(n => fixedText.includes(n));
     let when = '';
-    if (inFixed && days.length >= 10) when = '<span class="days"><a href="plan.html">매 세션 공통</a></span>';
+    if (inFixed && days.length >= 6) when = '<span class="days"><a href="plan.html">매 세션 공통</a></span>';
     else if (days.length) {
-      const shown = days.slice(0, 8).map(d => '<a href="plan.html#' + d.id + '">' + d.date.slice(5).replace('-', '/') + ' ' + d.dow + '</a>').join('');
-      when = '<span class="days">' + shown + (days.length > 8 ? '<a href="plan.html">외 ' + (days.length - 8) + '일</a>' : '') + '</span>';
+      const shown = days.slice(0, 9).map(d => '<a href="' + d.href + '">' + esc(d.label) + '</a>').join('');
+      when = '<span class="days">' + shown + (days.length > 9 ? '<a href="plan.html">외 ' + (days.length - 9) + '곳</a>' : '') + '</span>';
     }
     return '<div class="panel mv" data-span="4" id="' + window.DB_MOVE_ID(m) + '" data-cat="' + m.cat + '" data-find="' + esc((m.k + ' ' + (m.alias || []).join(' ') + ' ' + (m.en || '')).toLowerCase()) + '">' +
       '<div class="ph"><h2>' + esc(m.k) + '</h2>' +

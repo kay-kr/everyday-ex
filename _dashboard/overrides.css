@@ -150,32 +150,20 @@
    체크박스가 이미 왼쪽 여백 역할을 하므로 여기서만 되돌린다. */
 .blk .checklist, .blk .blknotes { padding-left: 0 }
 
-/* ── 7. 귀가 후 집에서 하는 블록 (at:"home") ──
-   운동장(인조잔디·트랙)에는 누울 자리가 없어서, 바닥에 눕는 동작은 전부 세션 맨 아래로 뺐다.
-   운동장에서 화면을 내리다가 "오늘은 여기까지"가 분명히 보여야 하므로 선을 하나 긋는다. */
-.homesep {
-  display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .5rem;
-  margin: .9rem 0 .5rem; padding: .45rem .6rem;
-  border-top: 1px dashed var(--line-2);
-  border-bottom: 1px dashed var(--line-2);
-  background: var(--warn-soft); border-radius: 5px;
+/* ── 7. 운동장 세션 맨 아래의 "집에 와서" 줄 ──
+   바닥에 눕는 동작은 전부 매일 하는 집 근력 루틴으로 옮겼다(2026-09-21).
+   그래서 운동장에서 화면이 끝나도 오늘이 끝난 것이 아니라는 것을 한 줄로 못박는다. */
+.afterbox {
+  margin: .75rem 0 0; padding: .5rem .6rem;
+  border: 1px dashed var(--warn); border-radius: 6px;
+  background: var(--warn-soft);
+  color: var(--ink-2); font-size: .85rem; line-height: 1.55;
 }
-.homesep > b { font: 700 .82rem var(--sans); color: var(--warn); white-space: nowrap }
-.homesep > span { font-size: .8rem; line-height: 1.5; color: var(--ink-2); flex: 1 1 14rem }
-
-/* 집 블록 자체 — 왼쪽 선을 점선으로 두어 운동장 블록과 한눈에 구별된다 */
-.blk.home { border-left-style: dashed; border-left-color: var(--warn) }
-.blk.home.bdone { border-left-color: var(--good) }
-.blk.home > b .bname { color: var(--warn) }
-.blk.home.bdone > b .bname { color: var(--good) }
-
-/* 블록 제목 옆의 '집' 표. 시간(50분) 바로 뒤에 붙는다 */
-.bhome {
-  flex: none; margin-left: .35rem;
-  font: 700 .62rem var(--mono); letter-spacing: .04em;
-  color: var(--warn); background: var(--warn-soft);
-  border-radius: 99px; padding: .08rem .38rem;
+.afterbox > b {
+  font: 700 .68rem var(--mono); letter-spacing: .06em;
+  color: var(--warn); margin-right: .45rem; text-transform: uppercase;
 }
+.afterbox a { font-weight: 600; white-space: nowrap }
 
 /* 시간 표시가 '현장 50분 + 집 10분' 두 조각으로 나뉜다. 뒤 조각은 한 단계 흐리게. */
 .chip.home { border-style: dashed }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>기록 · 평일 저녁 축구 트레이닝</title>
+<title>기록 · 저녁 트레이닝</title>
 <script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -15,11 +15,11 @@
 .logtbl th{font:600 .68rem/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.4rem .4rem;border-bottom:1px solid var(--line-2);white-space:nowrap}
 .logtbl td{padding:.25rem .4rem;border-bottom:1px solid var(--line);vertical-align:middle}
 .logtbl tr[data-today] td{background:var(--accent-soft)}
-.logtbl tr[data-wk="2"] td:first-child{box-shadow:inset 2px 0 0 var(--line-2)}
 .logtbl .dt{font:600 .8rem var(--mono);white-space:nowrap}
-.logtbl .th{color:var(--ink-2);white-space:nowrap;max-width:12rem;overflow:hidden;text-overflow:ellipsis}
-.logtbl input[type=number],.logtbl input[type=text]{width:100%;min-width:3.2rem;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font:500 .85rem var(--mono);padding:.22rem .3rem}
+.logtbl .th{color:var(--ink-2);white-space:nowrap;max-width:14rem;overflow:hidden;text-overflow:ellipsis}
+.logtbl input[type=number],.logtbl input[type=text],.logtbl input[type=date]{width:100%;min-width:3.2rem;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font:500 .85rem var(--mono);padding:.22rem .3rem}
 .logtbl input[type=text]{font-family:var(--sans);min-width:8rem}
+.logtbl input[type=date]{min-width:7.4rem}
 .logtbl input:focus{outline:2px solid var(--accent);outline-offset:-1px}
 .logtbl input[type=checkbox]{width:1.05rem;height:1.05rem;accent-color:var(--accent);cursor:pointer}
 .wkband td{background:var(--surface-2);font:600 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.3rem .4rem}
@@ -46,7 +46,7 @@
 <div class="wrap">
 
 <div class="topbar">
-  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <span class="proj" id="dbProject">저녁 트레이닝</span>
   <ul class="pages" id="dbPages"></ul>
   <span class="spacer"></span>
   <span class="source" id="dbSource" data-state="static"><span class="dot"></span><span class="txt">정적</span></span>
@@ -56,7 +56,7 @@
 <header class="top">
   <h1>기록</h1>
   <span class="badge accent" id="savedBadge">—</span>
-  <p class="lede">운동이 끝나면 여기에 적는다. 입력하는 즉시 이 브라우저에 저장되고 <a data-page="DASHBOARD.html">대시보드</a>의 지표와 차트에 그대로 반영된다. 무릎 NRS는 운동 전·운동 후·다음날 아침 세 번을 적어야 판단할 수 있다.</p>
+  <p class="lede">기록도 플랜과 같이 두 갈래다. <b>매일</b> 표에는 집 근력 루틴을 했는지와 그날 무릎 통증을 적고, <b>운동장</b> 표에는 나간 날짜와 RPE · 거리 · 심박을 적는다. 입력하는 즉시 이 브라우저에 저장되고 <a data-page="DASHBOARD.html">대시보드</a>에 그대로 반영된다.</p>
   <div class="meta">
     <span>저장 위치 <b>이 브라우저 (localStorage)</b></span>
     <span>백업 <b>내보내기 버튼으로 JSON 파일</b></span>
@@ -65,7 +65,7 @@
 
 <section class="grid">
   <div class="panel" data-span="12">
-    <div class="ph"><h2>세션 기록</h2>
+    <div class="ph"><h2>매일 · 집 근력 루틴과 무릎</h2>
       <span class="label">
         <button class="btn ghost" id="btnExport" type="button">JSON 내보내기</button>
         <button class="btn ghost" id="btnImport" type="button">가져오기</button>
@@ -78,20 +78,40 @@
       <div class="tbl-wrap">
         <table class="logtbl">
           <thead><tr>
-            <th>날짜</th><th>세션</th><th>완료</th>
-            <th>운동 전<br>NRS</th><th>운동 후<br>NRS</th><th>익일 아침<br>NRS</th>
-            <th>RPE</th><th>거리<br>km</th><th>평균<br>심박</th><th>메모</th>
+            <th>날짜</th><th>루틴</th><th>완료</th>
+            <th>운동 전<br>NRS</th><th>운동 후<br>NRS</th><th>익일 아침<br>NRS</th><th>메모</th>
           </tr></thead>
           <tbody id="logBody"></tbody>
         </table>
       </div>
     </div>
     <div class="pf">
-      <span>완료 <b id="sDone">0</b> / 15</span>
+      <span>집 루틴 <b id="sHome">0</b> / 21</span>
+      <span>연속 <b id="sStreak">—</b>일</span>
       <span>무릎 NRS 평균 <b id="sNrs">—</b></span>
+      <span>1주차 <b id="sN1">—</b> · 2주차 <b id="sN2">—</b> · 3주차 <b id="sN3">—</b></span>
+    </div>
+  </div>
+</section>
+
+<section class="grid">
+  <div class="panel" data-span="12">
+    <div class="ph"><h2>운동장 · 주 2회</h2><span class="label">요일이 없다 — 나간 날짜를 직접 적는다</span></div>
+    <div class="pb tight">
+      <div class="tbl-wrap">
+        <table class="logtbl">
+          <thead><tr>
+            <th>자리</th><th>세션</th><th>완료</th><th>나간 날</th>
+            <th>RPE</th><th>거리<br>km</th><th>평균<br>심박</th><th>메모</th>
+          </tr></thead>
+          <tbody id="fieldBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pf">
+      <span>완료 <b id="sField">0</b> / 6</span>
       <span>RPE 평균 <b id="sRpe">—</b></span>
       <span>누적 거리 <b id="sKm">—</b> km</span>
-      <span>1주차 <b id="sN1">—</b> · 2주차 <b id="sN2">—</b> · 3주차 <b id="sN3">—</b></span>
     </div>
   </div>
 </section>
@@ -110,28 +130,28 @@
     </div>
   </div>
   <div class="panel" data-span="4" id="tests">
-    <div class="ph"><h2>테스트 4종</h2><span class="label">10월 2일 · 설명은 <a data-page="plan.html#tests">3주 루틴</a></span></div>
+    <div class="ph"><h2>테스트 4종</h2><span class="label">3주차 2/2 세션 · 설명은 <a data-page="plan.html#tests">3주 루틴</a></span></div>
     <div class="pb">
       <div class="tgrid">
         <label>T1 · 12분 달리기<small>총 거리 · m</small></label><input type="number" id="t1" min="0" step="10">
         <label>T2 · 60초 벽 원터치 패스<small>성공 횟수</small></label><input type="number" id="t2" min="0" step="1">
         <label>T3 · 벽 스쿼트 버티기<small>통증 3 전까지 · 초</small></label><input type="number" id="t3" min="0" step="1">
         <label>T4 · 드리블 20m 왕복<small>초</small></label><input type="number" id="t4" min="0" step="0.1">
-        <label>측정일<small>기본값 10-02</small></label><input type="date" id="tAt" style="width:9rem">
+        <label>측정일<small>3주차 2/2 을 한 날</small></label><input type="date" id="tAt" style="width:9rem">
       </div>
-      <p class="note" style="margin-top:.5rem">1주차 금요일의 연속 조깅 8분 거리를 메모 칸에 적어 두면 T1과 바로 비교할 수 있다.</p>
+      <p class="note" style="margin-top:.5rem">집 루틴 쪽 결과 — 푸시업이 사다리 몇 단계였는지, 철봉을 몇 초 버텼는지 — 는 3주차 마지막 날의 <b>메모</b> 칸에 적는다. 그 두 줄이 다음 3주의 출발점이 된다.</p>
     </div>
   </div>
   <div class="panel" data-span="4">
     <div class="ph"><h2>기록 요령</h2><span class="label">숫자가 판단을 대신한다</span></div>
     <div class="pb">
       <ul class="rules">
+        <li><b>루틴 완료</b> — 5분짜리 최소판을 한 날도 완료로 친다. 연속을 끊지 않는 것이 이 기록의 목적이다.</li>
         <li><b>운동 전 NRS</b> — 계단 한 칸을 천천히 내려가 보고 그때 느낌을 적는다. 매번 같은 방법으로 재야 비교가 된다.</li>
-        <li><b>운동 후 NRS</b> — 쿨다운을 마친 직후. 이 값이 대시보드 차트의 파란 선이다.</li>
+        <li><b>운동 후 NRS</b> — 그날 마지막 운동을 마친 직후. 이 값이 대시보드 차트의 파란 선이다.</li>
         <li><b>익일 아침 NRS</b> — 다음날 아침에 다시 들어와 적는다. 전날보다 높으면 그 주 강도를 30% 내린다. 차트의 초록 선이다.</li>
-        <li><b>RPE</b> — 끝나고 30분 안에, 세션 전체가 얼마나 힘들었는지 1~10으로. 계획된 RPE보다 2 이상 높으면 다음 세션을 줄인다.</li>
-        <li><b>거리</b> — 스마트워치의 총 이동거리. 걷기를 포함한 값을 적는다.</li>
-        <li><b>메모</b> — 날씨, 컨디션, 무엇이 아팠는지. 3주 뒤 리뷰에서 가장 쓸모 있는 칸이다.</li>
+        <li><b>RPE</b> — 운동장 세션에만 적는다. 끝나고 30분 안에 1~10으로. 계획된 RPE보다 2 이상 높으면 다음 세션을 줄인다.</li>
+        <li><b>메모</b> — 날씨, 컨디션, 무엇이 아팠는지, 푸시업·철봉이 몇 단계였는지. 3주 뒤 리뷰에서 가장 쓸모 있는 칸이다.</li>
       </ul>
       <p class="note" style="margin-top:.5rem">기록은 이 브라우저에만 남는다. 다른 기기에서도 보려면 <b>JSON 내보내기</b>로 파일을 만들어 옮기고 <b>가져오기</b>로 불러온다.</p>
     </div>
@@ -159,6 +179,7 @@
   let data = LOG.load();
   const today = LOG.todayKey();
   const ok = LOG.available();
+  const short = k => k.slice(5).replace('-', '/');
 
   if (!ok) {
     $('storeWarn').innerHTML = '<div class="blocked-note" style="margin:.5rem .9rem"><b>저장 불가</b>' +
@@ -177,42 +198,83 @@
 
   function persist() { LOG.save(data); flash(); recompute(); }
 
-  /* ── 세션 표 ── */
-  const cols = [
+  /* ── 매일 표 : 21일 ── */
+  const dayCols = [
     { k: 'nrsPre', min: 0, max: 10, step: 1 },
     { k: 'nrsPost', min: 0, max: 10, step: 1 },
     { k: 'nrsAm', min: 0, max: 10, step: 1 },
-    { k: 'rpe', min: 1, max: 10, step: 1 },
-    { k: 'km', min: 0, max: 30, step: 0.1 },
-    { k: 'hr', min: 60, max: 220, step: 1 },
   ];
 
   let html = '';
-  let lastWeek = 0;
-  for (const x of P.days) {
-    if (x.week !== lastWeek) {
-      const w = P.weeks[x.week - 1];
-      html += '<tr class="wkband"><td colspan="10">' + w.id + ' · ' + esc(w.title) + ' · ' + esc(w.range) + '</td></tr>';
-      lastWeek = x.week;
+  for (let w = 1; w <= 3; w++) {
+    const wk = P.weeks[w - 1];
+    const hw = window.DB_HOME_OF(w);
+    html += '<tr class="wkband"><td colspan="7">' + wk.id + ' · ' + esc(wk.title) + ' · ' + esc(wk.range) +
+      ' — ' + esc(hw.theme) + ' (' + window.DB_HOME_MIN(hw) + '분)</td></tr>';
+    for (let i = (w - 1) * 7 + 1; i <= w * 7; i++) {
+      const k = window.DB_DATE_OF(i);
+      const r = data.sessions[k] || {};
+      const v = key => (r[key] == null || r[key] === '') ? '' : r[key];
+      html += '<tr data-date="' + k + '"' + (k === today ? ' data-today' : '') + '>' +
+        '<td class="dt">' + short(k) + ' ' + window.DB_DOW(k) + '</td>' +
+        '<td class="th">' + i + '일째 · W' + w + '</td>' +
+        '<td><input type="checkbox" data-k="done"' + (r.done ? ' checked' : '') + ' aria-label="완료"></td>' +
+        dayCols.map(c => '<td><input type="number" data-k="' + c.k + '" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '" value="' + v(c.k) + '"></td>').join('') +
+        '<td><input type="text" data-k="note" value="' + esc(v('note')) + '" placeholder="컨디션 · 아팠던 곳 · 푸시업/철봉 단계"></td>' +
+        '</tr>';
     }
-    const r = data.sessions[x.date] || {};
-    const v = k => (r[k] == null || r[k] === '') ? '' : r[k];
-    html += '<tr data-date="' + x.date + '" data-wk="' + x.week + '"' + (x.date === today ? ' data-today' : '') + '>' +
-      '<td class="dt">' + x.date.slice(5).replace('-', '/') + ' ' + x.dow + '</td>' +
-      '<td class="th">' + esc(x.theme) + '</td>' +
-      '<td><input type="checkbox" data-k="done"' + (r.done ? ' checked' : '') + ' aria-label="완료"></td>' +
-      cols.map(c => '<td><input type="number" data-k="' + c.k + '" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '" value="' + v(c.k) + '"></td>').join('') +
-      '<td><input type="text" data-k="note" value="' + esc(v('note')) + '" placeholder="컨디션 · 아팠던 곳"></td>' +
-      '</tr>';
   }
   $('logBody').innerHTML = html;
 
   $('logBody').addEventListener('input', e => {
     const el = e.target, tr = el.closest('tr[data-date]');
     if (!tr || !el.dataset.k) return;
-    const date = tr.dataset.date;
-    const rec = data.sessions[date] || (data.sessions[date] = {});
+    const rec = data.sessions[tr.dataset.date] || (data.sessions[tr.dataset.date] = {});
     if (el.type === 'checkbox') rec.done = el.checked;
+    else if (el.type === 'number') rec[el.dataset.k] = el.value === '' ? null : +el.value;
+    else rec[el.dataset.k] = el.value;
+    persist();
+  });
+
+  /* ── 운동장 표 : 6세션 ── */
+  const fCols = [
+    { k: 'rpe', min: 1, max: 10, step: 1 },
+    { k: 'km', min: 0, max: 30, step: 0.1 },
+    { k: 'hr', min: 60, max: 220, step: 1 },
+  ];
+  let fh = '';
+  let lastWeek = 0;
+  for (const x of P.field) {
+    if (x.week !== lastWeek) {
+      const wk = P.weeks[x.week - 1];
+      fh += '<tr class="wkband"><td colspan="8">' + wk.id + ' · ' + esc(wk.title) + ' · ' + esc(wk.range) + '</td></tr>';
+      lastWeek = x.week;
+    }
+    const r = data.field[x.id] || {};
+    const v = key => (r[key] == null || r[key] === '') ? '' : r[key];
+    fh += '<tr data-fid="' + x.id + '">' +
+      '<td class="dt">' + x.week + '주차 ' + x.slotLabel + '</td>' +
+      '<td class="th">' + esc(x.theme) + '</td>' +
+      '<td><input type="checkbox" data-k="done"' + (r.done ? ' checked' : '') + ' aria-label="완료"></td>' +
+      '<td><input type="date" data-k="at" value="' + esc(v('at')) + '"></td>' +
+      fCols.map(c => '<td><input type="number" data-k="' + c.k + '" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '" value="' + v(c.k) + '"></td>').join('') +
+      '<td><input type="text" data-k="note" value="' + esc(v('note')) + '" placeholder="날씨 · 컨디션 · 아팠던 곳"></td>' +
+      '</tr>';
+  }
+  $('fieldBody').innerHTML = fh;
+
+  $('fieldBody').addEventListener('input', e => {
+    const el = e.target, tr = el.closest('tr[data-fid]');
+    if (!tr || !el.dataset.k) return;
+    const rec = data.field[tr.dataset.fid] || (data.field[tr.dataset.fid] = {});
+    if (el.type === 'checkbox') {
+      rec.done = el.checked;
+      if (rec.done && !rec.at) {                       // 완료로 바꾸면 나간 날짜를 오늘로 채워 둔다
+        rec.at = today;
+        const dEl = tr.querySelector('input[data-k=at]');
+        if (dEl) dEl.value = today;
+      }
+    }
     else if (el.type === 'number') rec[el.dataset.k] = el.value === '' ? null : +el.value;
     else rec[el.dataset.k] = el.value;
     persist();
@@ -240,7 +302,7 @@
   /* ── 테스트 ── */
   const tIds = ['t1', 't2', 't3', 't4'];
   tIds.forEach(id => { $(id).value = data.tests[id] == null ? '' : data.tests[id]; });
-  $('tAt').value = data.tests.at || '2026-10-02';
+  $('tAt').value = data.tests.at || window.DB_DATE_OF(P.days);
   tIds.concat(['tAt']).forEach(id => {
     $(id).addEventListener('input', () => {
       data.tests[id === 'tAt' ? 'at' : id] = $(id).value === '' ? null : ($(id).type === 'number' ? +$(id).value : $(id).value);
@@ -252,7 +314,9 @@
   function recompute() {
     const st = LOG.stats(data, P);
     const f = (v, n) => v == null ? '—' : (+v).toFixed(n);
-    $('sDone').textContent = st.doneCount;
+    $('sHome').textContent = st.homeDone;
+    $('sStreak').textContent = st.streak || '—';
+    $('sField').textContent = st.fieldDone;
     $('sNrs').textContent = f(st.nrsAvg, 1);
     $('sRpe').textContent = f(st.rpeAvg, 1);
     $('sKm').textContent = st.kmSum ? st.kmSum.toFixed(1) : '—';
@@ -278,8 +342,8 @@
     const fr = new FileReader();
     fr.onload = () => {
       try {
-        const d = JSON.parse(fr.result);
-        data = { sessions: d.sessions || {}, weights: d.weights || {}, tests: d.tests || {}, updated: null };
+        const j = JSON.parse(fr.result);
+        data = { sessions: j.sessions || {}, field: j.field || {}, weights: j.weights || {}, tests: j.tests || {}, updated: null };
         LOG.save(data); location.reload();
       } catch (err) { $('savedBadge').textContent = '파일을 읽지 못했다'; }
     };

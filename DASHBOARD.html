@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>평일 저녁 축구 트레이닝 대시보드</title>
+<title>저녁 트레이닝 대시보드</title>
 <script>try{var t=localStorage.getItem('db-theme');if(t&&t!=='system')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -27,11 +27,6 @@
 .zrow .zz{font:600 .8rem var(--mono);background:var(--accent-soft);color:var(--accent);padding:.05rem .3rem;border-radius:3px}
 .zrow .zb{font:500 .88rem var(--mono);margin-left:auto;white-space:nowrap}
 .zrow .zu{color:var(--muted);font-size:.82rem;flex-basis:100%;margin-left:2.2rem}
-.wkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
-.wkgrid .c{border:1px solid var(--line);border-radius:6px;padding:.45rem .55rem}
-.wkgrid .c b{display:block;font-size:.88rem}
-.wkgrid .c .n{font:600 1.1rem var(--mono)}
-.wkgrid .c small{color:var(--muted);display:block;font-size:.78rem}
 .movebox{margin-top:.6rem;border-top:1px solid var(--line);padding-top:.45rem}
 .movebox>summary{cursor:pointer;font:600 .85rem var(--sans);color:var(--accent);list-style:none;padding:.15rem 0}
 .movebox>summary::-webkit-details-marker{display:none}
@@ -45,15 +40,42 @@
 .movelist em{display:block;color:var(--bad);font-size:.82rem;font-style:normal;margin-top:.1rem}
 .movecat{display:block;font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.55rem 0 .1rem;border-bottom:1px solid var(--line-2);padding-bottom:.12rem}
 .movecat b{color:var(--accent)}
-.movelist i{font:500 .78rem var(--mono);font-style:normal;color:var(--muted);margin-left:.4rem}
 .moveall{margin:.4rem 0 0;font-size:.85rem}
+
+/* 21일 격자 — 집 루틴을 며칠 했는지 한눈에 본다. 한 줄이 한 주다. */
+.d21{display:grid;grid-template-columns:repeat(7,1fr);gap:.28rem}
+.d21 .c{border:1px solid var(--line);border-radius:5px;padding:.3rem .2rem;text-align:center;min-height:3.1rem}
+.d21 .c .n{display:block;font:600 .62rem var(--mono);color:var(--muted)}
+.d21 .c .dd{display:block;font:600 .8rem var(--mono)}
+.d21 .c .w{display:block;font-size:.7rem;color:var(--muted)}
+.d21 .c[data-s=done]{background:var(--good-soft);border-color:var(--good)}
+.d21 .c[data-s=done] .dd{color:var(--good)}
+.d21 .c[data-s=today]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.d21 .c[data-s=miss]{background:var(--bad-soft);border-color:var(--line-2)}
+.d21 .c[data-s=miss] .dd{color:var(--bad)}
+.d21row{font:600 .62rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:.5rem 0 .2rem}
+.d21row:first-child{margin-top:0}
+
+/* 사다리 — 푸시업 · 철봉이 지금 몇 단계인지 */
+.ldr{margin:0 0 .6rem}
+.ldr>b{display:block;font-size:.92rem;margin-bottom:.2rem}
+.ldr ol{list-style:none;margin:0;padding:0}
+.ldr li{display:flex;gap:.45rem;align-items:baseline;padding:.22rem 0;border-bottom:1px solid var(--line);font-size:.85rem}
+.ldr li:last-child{border-bottom:0}
+.ldr li .s{font:600 .68rem var(--mono);color:var(--muted);flex:none;width:2.6rem}
+.ldr li .v{color:var(--ink-2)}
+.ldr li[data-now]{background:var(--accent-soft);border-radius:4px;padding-left:.3rem;padding-right:.3rem}
+.ldr li[data-now] .s{color:var(--accent)}
+.ldr li[data-now] .v{color:var(--ink);font-weight:600}
+.fslot{display:flex;align-items:baseline;gap:.4rem;flex-wrap:wrap;margin-bottom:.35rem}
+.fslot .sl{font:700 .9rem var(--mono);color:var(--accent)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <div class="topbar">
-  <span class="proj" id="dbProject">평일 저녁 축구 트레이닝</span>
+  <span class="proj" id="dbProject">저녁 트레이닝</span>
   <ul class="pages" id="dbPages"></ul>
   <span class="spacer"></span>
   <span class="source" id="dbSource" data-state="static"><span class="dot"></span><span class="txt">정적</span></span>
@@ -61,15 +83,15 @@
 </div>
 
 <header class="top">
-  <h1>평일 저녁 축구 트레이닝 · 3주</h1>
+  <h1>저녁 트레이닝 · 3주</h1>
   <span class="badge" data-state="진행 중">진행 중</span>
   <span class="badge accent" id="hdWeek">1주차</span>
-  <span class="badge">주 5회 · 평일 50분 + 수 레슨</span>
-  <p class="lede">월 · 화 · 목 · 금은 퇴근 후 광명시민운동장에서 혼자 50분, 수요일은 클럽 축구 레슨이다. 목표는 체중 감량과 기초 체력 회복이고, 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다. 오늘 할 것만 보고 나가면 된다.</p>
+  <span class="badge">집 근력 매일 15~20분 + 운동장 주 2회 50분</span>
+  <p class="lede">두 갈래다. <b>집 근력 루틴</b>은 매일 15~20분 — 푸시업 · 철봉 · 코어 · 둔근을 3주에 걸쳐 한 칸씩만 올린다. <b>운동장</b>은 주 2회 50분 — 요일은 정하지 않고 그 주의 <b>1/2 · 2/2</b> 두 자리를 나가는 날에 채운다. 모든 강도는 왼쪽 무릎이 견디는 선 안에서 정해진다.</p>
   <div class="meta">
     <span>갱신 <b><time id="dbUpdated" datetime="">—</time></b></span>
-    <span>기간 <b>2026-09-14 ~ 10-02 (15세션)</b></span>
-    <span>장소 <b>광명시민운동장 (월·화·목·금) · 클럽 레슨장 (수)</b></span>
+    <span>기간 <b id="hdRange">—</b></span>
+    <span>구성 <b>집 21일 · 운동장 6회</b></span>
     <span>기준 <b>1973년생 · 170cm · 73~74kg · BMI 25.4</b></span>
   </div>
 </header>
@@ -79,38 +101,36 @@
   <div class="panel" data-span="12">
     <div class="tiles">
       <div class="tile"><span class="label">오늘</span><span class="v" id="kToday" style="font-size:1.05rem">—</span><span class="s" id="kTodaySub">—</span></div>
-      <div class="tile"><span class="label">완료 세션</span><span class="v num"><span id="kDone">0</span> / 15</span><span class="s" id="kDoneSub">오늘 카드나 루틴에서 눌러 체크한다</span><div class="meter"><i id="kDoneBar" style="width:0%"></i></div></div>
+      <div class="tile"><span class="label">집 루틴 연속</span><span class="v num" id="kStreak">—</span><span class="s" id="kStreakSub">하루도 안 빠진 날수</span></div>
+      <div class="tile"><span class="label">집 루틴</span><span class="v num"><span id="kHome">0</span> / 21</span><span class="s" id="kHomeSub">21일 중 수행한 날</span><div class="meter"><i id="kHomeBar" style="width:0%"></i></div></div>
+      <div class="tile"><span class="label">운동장</span><span class="v num"><span id="kField">0</span> / 6</span><span class="s" id="kFieldSub">주 2회 × 3주</span><div class="meter"><i id="kFieldBar" style="width:0%"></i></div></div>
       <div class="tile"><span class="label">무릎 NRS 평균</span><span class="v num" id="kNrs">—</span><span class="s" id="kNrsSub">3 이하면 계획대로 증량</span></div>
       <div class="tile"><span class="label">체중</span><span class="v num" id="kW">—</span><span class="s" id="kWSub">시작 73.5kg 기준</span></div>
-      <div class="tile"><span class="label">누적 이동거리</span><span class="v num" id="kKm">—</span><span class="s">걷기 포함 · km</span></div>
-      <div class="tile"><span class="label">연속 수행</span><span class="v num" id="kStreak">—</span><span class="s">계획된 날 기준 연속 일수</span></div>
     </div>
   </div>
 </section>
 
-<!-- ── 오늘 세션 + 지금 ── -->
+<!-- ── 오늘의 집 루틴 + 지금 ── -->
 <section class="grid">
   <div class="panel" data-span="8">
-    <div class="ph"><h2>오늘 할 세션</h2><span class="label"><a data-page="_dashboard/plan.html">3주 전체 루틴</a></span></div>
+    <div class="ph"><h2>오늘 · 집 근력 루틴</h2><span class="label"><a data-page="_dashboard/plan.html">3주 전체 루틴</a></span></div>
     <div class="pb" id="todayBox"></div>
   </div>
   <div class="panel" data-span="4">
     <div class="ph"><h2>지금</h2><span class="label">현재 단계 · 다음 할 일</span></div>
     <div class="pb">
       <span class="label">현재 단계</span>
-      <p style="font-weight:600;font-size:1.1rem;margin:.15rem 0 .2rem" id="nowStage">S1 · 적응주</p>
-      <p style="color:var(--ink-2)" id="nowText">이번 주는 기록을 모으는 주간이다. 무릎이 어디까지 견디는지 숫자로 확인하는 것이 유산소 성과보다 우선한다. S1의 통과 조건을 넘겨야 S2에서 컷팅과 슛을 넣는다. 수요일 레슨은 이번 주부터 바로 복귀한다 — 다만 숏게임은 한 판만 한다.</p>
+      <p style="font-weight:600;font-size:1.1rem;margin:.15rem 0 .2rem" id="nowStage">—</p>
+      <p style="color:var(--ink-2)" id="nowText">—</p>
       <span class="label" style="display:block;margin-top:.7rem">다음 할 일</span>
-      <ol class="next" style="margin-top:.3rem">
-        <li>오늘 세션을 마치고 <a data-page="_dashboard/log.html">기록</a>에 NRS · RPE · 거리를 입력한다</li>
-        <li>내일 아침 무릎 통증을 한 번 더 적는다 — 전날보다 높으면 강도를 30% 내린다</li>
-        <li>수요일 레슨은 15분 일찍 도착해 혼자 워밍업을 끝내 놓는다</li>
-        <li>금요일에 연속 조깅 8분 거리를 재서 3주차 T1의 기준선을 만든다</li>
-      </ol>
+      <ol class="next" style="margin-top:.3rem" id="nextList"></ol>
       <div class="blocked-note" style="margin-top:.7rem"><b>주의</b>계단 내려가기는 3주 내내 금지다. 슬개대퇴통증에서 가장 확실한 통증 유발 동작이라 R1로 따로 관리한다.</div>
     </div>
   </div>
 </section>
+
+<!-- ── 이번 주 운동장 2회 ── -->
+<section class="grid" id="fieldWrap"></section>
 
 <!-- ── 단계 · 결정 · 리스크 ── -->
 <section class="grid">
@@ -125,15 +145,18 @@
     <div class="ph"><h2>결정 사항</h2><span class="label">왜 이렇게 짰는가</span></div>
     <div class="pb">
       <dl class="kv">
-        <dt>D1</dt><dd>유산소 우선, 근력은 보조<small>목표가 체중 감량과 기초 체력이라 시간의 절반 이상을 유산소에 쓴다. 다만 둔근 근력은 무릎을 지키는 장치라 매주 넣는다.</small></dd>
-        <dt>D2</dt><dd>1주차는 워크-런<small>10분 조깅은 되지만 주 5일 연속 부하는 다른 문제다. 걷기를 끼워 총량을 늘리고 관절 충격을 낮춘다.</small></dd>
+        <dt>D1</dt><dd>유산소는 운동장, 근력은 집<small>운동장이 주 2회로 줄면서 역할을 갈랐다. 달리기와 볼은 운동장에서만, 상체·코어·둔근은 매일 집에서. 서로 대신하지 않으므로 한쪽을 빠뜨리면 그 자리가 통째로 빈다.</small></dd>
+        <dt>D2</dt><dd>달리기는 워크-런에서 출발<small>10분 조깅은 되지만 한 번에 긴 부하는 다른 문제다. 걷기를 끼워 총량을 늘리고 관절 충격을 낮춘 뒤 3주차에 연속 8분으로 붙인다.</small></dd>
         <dt>D3</dt><dd>계단 내려가기 3주 금지<small>통증이 정확히 그 동작에서 나온다. 편심 부하를 없애는 것이 이번 3주의 제1 안전선이다.</small></dd>
-        <dt>D4</dt><dd>슛은 레슨 안에서만, 60%→75%<small>오른발로 찰 때 왼쪽이 지지발이 되어 비틀림을 받는다. 수요일 레슨의 마무리 슛으로만 하고, 1회차는 인사이드, 2회차 인스텝 60%, 3회차 75%까지 올린다.</small></dd>
+        <dt>D4</dt><dd>슛은 이번 3주에 넣지 않음<small>수요일 레슨이 빠지면서 슛을 할 자리가 사라졌다. 오른발 슛은 왼쪽이 지지발이 되어 비틀림을 받으므로, 굳이 혼자 하는 세션에 되살리지 않는다.</small></dd>
         <dt>D5</dt><dd>심박 구간은 만 53세 기준<small>1973년생 · HRmax 171로 계산했다. 나이가 한 살 오르면 plandata.js 의 age·hrmax·zones 를 함께 고친다.</small></dd>
         <dt>D6</dt><dd>식단은 건드리지 않음<small>본인이 선택한 방식이다. 대신 되돌리기 쉬운 3가지만 권장으로 둔다.</small></dd>
-        <dt>D7</dt><dd>주 5일 고정<small>주말은 회복. 생활축구 경기를 뛴 주는 월요일 강도를 한 단계 내린다.</small></dd>
-        <dt>D8</dt><dd>수요일은 축구 레슨으로 대체<small>무릎 때문에 빠져 있던 클럽 레슨에 복귀한다. 혼자 하던 인터벌·슛 블록은 레슨의 론도와 숏게임이 대신하므로 따로 넣지 않는다. 대신 강도를 내가 정할 수 없는 만큼 빠질 기준을 미리 정해 뒀다 — R7.</small></dd>
-        <dt>D9</dt><dd>바닥에 눕는 동작은 집에서<small>9/15 화요일에 운동장에서 직접 해 보니 누울 자리가 없었다. 클램쉘·글루트 브릿지·사이드 라잉 힙 앱덕션·데드버그·폼롤링을 각 세션 맨 아래 "귀가 후" 블록으로 옮겼다. 빼지 않고 옮긴 이유는 둔근과 코어가 이 플랜에서 무릎을 지키는 장치이기 때문이다. 운동장에는 서서 되는 대역(스탠딩 밴드 힙 앱덕션·킥백·한 발 서기)을 대신 넣었다 — R8.</small></dd>
+        <dt>D7</dt><dd>운동장은 주 2회 · 요일 미지정<small>주 5일은 실제 생활과 맞지 않았다. 요일을 박아 두면 못 간 날이 곧 실패로 기록되므로, 요일 대신 "그 주의 1/2 · 2/2" 라는 자리만 두고 나가는 날에 채우게 했다 — R7.</small></dd>
+        <dt>D8</dt><dd>수요일 레슨은 플랜에서 제외<small>언제 나갈지 정할 수 없어 플랜에서 뺐다. 나가게 되면 그날은 운동장 세션 한 자리를 쓴 것으로 치고 집 루틴만 채운다. 레슨 동작 설명은 동작 사전에 남겨 두었다.</small></dd>
+        <dt>D9</dt><dd>바닥에 눕는 동작은 집에서<small>운동장에 누울 자리가 없다(9/15 확인). 클램쉘·글루트 브릿지·사이드 라잉 힙 앱덕션·데드버그·폼롤링은 이제 매일 하는 집 루틴 ④·⑤ 칸에 들어가 있다 — R8.</small></dd>
+        <dt>D10</dt><dd>집 근력은 매일 15~20분<small>주 2~3회 30분보다 매일 15~20분이 붙이기 쉽다. 강도의 상한을 "끝나고 한 세트 더 할 수 있는 정도"로 못박은 것도 매일 하기 위해서다.</small></dd>
+        <dt>D11</dt><dd>푸시업·철봉은 횟수가 아니라 단계로<small>현재 푸시업도 풀업도 1회 남짓이다. 이때 횟수를 늘리면 자세가 먼저 무너진다. 그래서 푸시업은 손 짚는 높이, 철봉은 매달리는 시간으로 올리는 6단계 사다리를 만들고 주차마다 한 칸씩만 움직인다.</small></dd>
+        <dt>D12</dt><dd>3주 뒤에도 크게 올리지 않음<small>매일 하는 운동의 강도를 올리면 매일 할 수 없게 된다. 4주차 이후에도 칸과 시간은 그대로 두고 사다리만 한 칸 올린다.</small></dd>
       </dl>
     </div>
   </div>
@@ -144,26 +167,45 @@
         <li>R1 · 슬개대퇴통증 악화 — 편심 부하가 최대 유발 요인. 계단 하강·깊은 스쿼트·점프 착지를 3주간 뺀다.</li>
         <li>R2 · 인조잔디에서 스터드가 박히면 발 대신 무릎이 비틀린다. 컷팅 각도와 속도를 제한하고 TF 또는 러닝화를 권한다.</li>
         <li>R3 · 건병증은 급격한 볼륨 증가에 약하다. 주당 증가폭을 20% 안으로 묶었다.</li>
-        <li>R4 · 오른발 슛이 오히려 왼쪽 지지발에 부하를 준다. 슛 횟수를 양발 모두 제한한다.</li>
-        <li>R5 · 저녁 고강도는 수면을 방해한다. 수요일·금요일은 취침 3시간 전 종료.</li>
+        <li>R4 · 매일 하는 근력은 어깨 앞과 팔꿈치 안쪽에 먼저 쌓인다. 시큰한 느낌이 오면 그 다음날은 사다리를 한 칸 내린다 — 쉬는 것이 아니라 내리는 것이다.</li>
+        <li>R5 · 저녁 고강도는 수면을 방해한다. 운동장 세션은 취침 3시간 전 종료, 집 루틴은 마무리 스트레칭으로 끝낸다.</li>
         <li>R6 · 야간 단독 운동. 휴대폰을 지참하고 조명이 있는 구역에서만 한다.</li>
-        <li>R7 · 수요일 레슨은 강도를 내가 정하지 못한다. 숏게임 판수 상한(1회차 1판 → 2회차부터 남은 시간)과 "삐끗하면 그 자리에서 빠진다"를 미리 정해 두고, 다음날 아침 NRS로 판정한다.</li>
-        <li>R8 · 집에서 하는 블록은 빠뜨리기 쉽다. 운동장에서 끝났다는 느낌이 들기 때문이다. 대응은 셋이다 — 체크리스트에 그대로 남겨 진행바가 100%가 되지 않게 했고, 샤워 전에 하도록 시각을 못 박았고, 필요한 물건(매트·세라밴드)을 집에 두게 했다. 그래도 사흘 연속 빠지면 화요일 운동장 서킷을 한 라운드 늘려 보충한다.</li>
+        <li>R7 · 요일을 정하지 않으면 주말로 몰리기 쉽다. 두 세션 사이에 하루 이상을 비우고, 금요일까지 한 번도 못 갔으면 남은 한 번은 강도를 낮춰서라도 나간다.</li>
+        <li>R8 · 매일 하는 루틴은 한 번 끊기면 그대로 끝난다. 대응은 셋이다 — 5분짜리 최소판을 따로 정해 두었고, 샤워 전으로 시각을 못 박았고, 필요한 물건(매트·세라밴드·철봉)을 제자리에 두게 했다. 사흘 연속 빠지면 강도를 올리지 말고 한 칸 내려 다시 시작한다.</li>
+        <li>R9 · 철봉에서 털썩 떨어지면 착지 충격이 그대로 무릎으로 간다. 내려올 때 발로 먼저 받고 무릎을 살짝 굽히는 것을 동작의 일부로 적어 두었다.</li>
       </ul>
     </div>
   </div>
 </section>
 
-<!-- ── 부하 곡선 + 15일 표 ── -->
+<!-- ── 21일 격자 + 운동장 6세션 ── -->
 <section class="grid">
   <div class="panel" data-span="6">
-    <div class="ph"><h2>일별 예상 소모</h2><span class="label">kcal · 73.5kg 기준 추정</span></div>
-    <div class="pb tight"><div class="chart"><canvas id="chartLoad"></canvas></div></div>
-    <div class="pf" id="kcalFoot"></div>
+    <div class="ph"><h2>집 루틴 21일</h2><span class="label" id="d21Label">—</span></div>
+    <div class="pb" id="d21Box"></div>
+    <div class="pf" id="d21Foot"></div>
   </div>
   <div class="panel" data-span="6">
-    <div class="ph"><h2>15세션 한눈에</h2><span class="label" id="tblLabel">—</span></div>
-    <div class="pb tight" id="tblDays"></div>
+    <div class="ph"><h2>운동장 6세션</h2><span class="label" id="tblLabel">—</span></div>
+    <div class="pb tight" id="tblField"></div>
+    <div class="pf" id="kcalFoot"></div>
+  </div>
+</section>
+
+<!-- ── 단계 사다리 ── -->
+<section class="grid">
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>단계 사다리</h2><span class="label">주차와 별개로, 그날 자세가 되는 칸에서 한다 (D11)</span></div>
+    <div class="pb" id="ladderBox"></div>
+  </div>
+  <div class="panel" data-span="6">
+    <div class="ph"><h2>매일 굴러가게 하는 규칙</h2><span class="label">강도보다 이쪽이 먼저다</span></div>
+    <div class="pb">
+      <ul class="rules" id="homeRules"></ul>
+      <span class="label" style="display:block;margin-top:.7rem">못 하겠는 날의 최소판 <b id="minMin">5</b>분</span>
+      <ul class="rules" id="minList" style="margin-top:.25rem"></ul>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.5rem" id="minNote"></p>
+    </div>
   </div>
 </section>
 
@@ -172,7 +214,7 @@
   <div class="panel" data-span="6">
     <div class="ph"><h2>체중 추세</h2><span class="label">kg · 아침 공복, 주 3회</span></div>
     <div class="pb tight"><div class="chart"><canvas id="chartW"></canvas></div></div>
-    <div class="pf"><span>시작 <b id="wStart">—</b></span><span>현재 <b id="wNow">—</b></span><span>3주 목표 <b>72.3~72.8</b></span></div>
+    <div class="pf"><span>시작 <b id="wStart">—</b></span><span>현재 <b id="wNow">—</b></span><span>3주 목표 <b>72.5~73.0</b></span></div>
   </div>
   <div class="panel" data-span="6">
     <div class="ph"><h2>무릎 통증 추세</h2><span class="label">NRS 0~10 · 초록은 다음날 아침</span></div>
@@ -203,7 +245,7 @@
     <div class="ph"><h2>식단 최소 3원칙</h2><span class="label">강제 아님 · 권장 (D6)</span></div>
     <div class="pb">
       <dl class="kv" id="dietBox"></dl>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.5rem">운동만으로는 3주에 지방 약 0.7kg이 빠진다. 이 3가지를 지키면 1.2~1.5kg까지 기대할 수 있다. 그 이상 빠지면 대부분 수분이다.</p>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.5rem">운동장이 주 2회로 줄면서 운동만으로 빠지는 지방은 3주에 약 0.5kg 수준이다. 이 3가지를 지키면 1.0~1.3kg까지 기대할 수 있다. 그 이상 빠지면 대부분 수분이다.</p>
     </div>
   </div>
 </section>
@@ -229,8 +271,9 @@
     <div class="ph"><h2>변경 이력</h2></div>
     <div class="pb">
       <ul class="history">
-        <li><time datetime="2026-09-15T09:10+09:00">09-15 09:10</time><span>운동장에서 눕는 동작이 안 되는 것을 확인 (D9 · R8) · 바닥 5동작을 세션 맨 아래 "귀가 후" 블록으로 분리 · 화요일 서킷을 운동장 6 + 집 4 로 재구성 · 서서 하는 대역 3동작 추가 · 제자리 볼터치 설명 구체화</span></li>
-        <li><time datetime="2026-09-14T17:40+09:00">09-14 17:40</time><span>수요일을 축구 레슨으로 대체 (D8 · R7) · 날짜별 준비물 표시 · 블록마다 쉬는 법 명시 · 설명줄에서 체크박스 제거 · 묶음 이름 툴팁 추가</span></li>
+        <li><time datetime="2026-09-21T10:30+09:00">09-21 10:30</time><span>운동장을 주 2회로 축소하고 요일 고정을 없앰 (D7 · R7) · 수요일 레슨을 플랜에서 제외 (D8) · 매일 하는 집 근력 루틴 신설 — 푸시업 · 철봉 · 코어 · 둔근 6칸 15~20분, 3주 단계 사다리 (D10 · D11 · D12) · 기록 구조를 "날짜(집) + 슬롯(운동장)" 두 갈래로 분리</span></li>
+        <li><time datetime="2026-09-15T09:10+09:00">09-15 09:10</time><span>운동장에서 눕는 동작이 안 되는 것을 확인 (D9 · R8) · 바닥 5동작을 세션 맨 아래 "귀가 후" 블록으로 분리 · 화요일 서킷을 운동장 6 + 집 4 로 재구성 · 서서 하는 대역 3동작 추가</span></li>
+        <li><time datetime="2026-09-14T17:40+09:00">09-14 17:40</time><span>수요일을 축구 레슨으로 대체 · 날짜별 준비물 표시 · 블록마다 쉬는 법 명시 · 설명줄에서 체크박스 제거 · 묶음 이름 툴팁 추가</span></li>
         <li><time datetime="2026-09-14T16:50+09:00">09-14 16:50</time><span>오늘 카드 날짜가 안 나오던 오류 수정 · 세션 항목별 체크리스트 추가 · 갱신 시각을 실제 시각으로</span></li>
         <li><time datetime="2026-09-14T16:05+09:00">09-14 16:05</time><span>각 날 프로그램과 오늘 카드에 완료 여부 버튼 추가 (기록 페이지와 연동)</span></li>
         <li><time datetime="2026-09-14T15:55+09:00">09-14 15:55</time><span>GitHub Pages 게시 준비(.nojekyll · index.html) · 표 툴팁 잘림과 터치 툴팁 수정</span></li>
@@ -261,87 +304,145 @@
 <script src="_dashboard/dashboard.js"></script>
 <script>
 (function () {
-  const P = window.DB_PLAN, LOG = window.EXLOG;
+  const P = window.DB_PLAN, LOG = window.EXLOG, SES = window.DB_SESSION;
   const d = LOG.load(), st = LOG.stats(d, P);
   const $ = id => document.getElementById(id);
   const esc = DB.esc;
   const md = (s, n) => s == null ? '—' : (+s).toFixed(n);
-
-  /* ── 완료 여부 버튼. 기록 페이지와 같은 저장소를 본다 ── */
   const canSave = LOG.available();
-  const LABEL = { done: '완료', today: '오늘', missed: '미기록', todo: '예정' };
-  const stateOf = x => (d.sessions[x.date] || {}).done ? 'done'
-    : x.date === st.today ? 'today'
-    : x.date < st.today ? 'missed' : 'todo';
-  const todayStateBtn = x => {
-    const s = stateOf(x);
-    return '<button class="dstate" type="button" id="todayState" data-date="' + x.date + '" data-state="' + s + '"' +
-      ' aria-pressed="' + (s === 'done') + '"' +
+  const short = k => k.slice(5).replace('-', '/');
+
+  $('hdRange').textContent = short(P.start) + ' ~ ' + short(window.DB_DATE_OF(P.days)) + ' (21일)';
+
+  /* ═══ 오늘 · 집 근력 루틴 ═══
+     운동장과 달리 이쪽은 날짜가 있다. 오늘 날짜의 기록에 체크가 쌓인다. */
+  const hw = window.DB_HOME_OF(st.currentWeek);
+  const today = st.today;
+  const rec = d.sessions[today] || (d.sessions[today] = {});
+  const box = $('todayBox');
+
+  const homeBtn = () => {
+    const s = rec.done ? 'done' : 'today';
+    return '<button class="dstate" type="button" id="homeState" data-state="' + s + '" aria-pressed="' + (s === 'done') + '"' +
       (canSave ? ' title="눌러서 완료 여부를 바꾼다"' : ' disabled title="이 브라우저는 저장을 막고 있어 바꿀 수 없다"') +
-      '>' + LABEL[s] + '</button>';
+      '>' + (rec.done ? '완료' : '오늘') + '</button>';
   };
 
-  /* ── 오늘 세션 카드 ── */
-  const day = st.todayDay || st.nextDay;
-  const box = $('todayBox');
-  if (!day) {
-    box.innerHTML = '<div class="empty">3주 플랜의 15세션을 모두 지났다. 테스트 결과로 다음 플랜을 짤 차례다.</div>';
-    $('kToday').textContent = '완주';
-    $('kTodaySub').textContent = 'S4 리뷰 단계';
-  } else {
-    const isToday = !!st.todayDay;
-    const rest = !isToday ? '<span class="chip warn">오늘은 계획된 세션이 없다 — 아래는 다음 세션이다</span>' : '';
-    const rec = d.sessions[day.date] || (d.sessions[day.date] = {});
-    const SES = window.DB_SESSION;
-    box.innerHTML =
-      rest +
-      '<div class="today-head">' +
-        '<span class="dnum">' + day.date.slice(5).replace('-', '/') + ' (' + day.dow + ')</span>' +
-        '<span class="dtheme">' + esc(day.theme) + '</span>' +
-        '<span class="chip accent">' + day.week + '주차 · ' + day.id.toUpperCase() + '</span>' +
-        '<span class="chip mute">RPE ' + esc(day.rpe) + '</span>' +
-        '<span class="chip mute">약 ' + day.kcal + ' kcal</span>' +
-        '<span class="chip mute">' + day.km.toFixed(1) + ' km</span>' +
-        '<span class="chip mute">운동장 ' + window.DB_DAY_MIN(day) + '분</span>' +
-        '<span class="chip mute home" title="귀가 후 집에서 하는 바닥 동작">집 ' + window.DB_HOME_MIN(day) + '분</span>' +
-        todayStateBtn(day) +
-      '</div>' +
-      '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(day.headline) + '</p>' +
-      SES.gearHTML(day, P.fixed) +
-      SES.progressHTML(day, rec, { readonly: !canSave }) +
-      SES.blocksHTML(day, rec, { readonly: !canSave }) +
-      '<div class="banlist"><span class="label" style="align-self:center">오늘 하지 않는 것</span>' +
-        day.ban.map(x => '<span class="chip">' + esc(x) + '</span>').join('') + '</div>' +
-      window.DB_MOVES_PANEL(day, '_dashboard/');
+  const outOfRange = st.beforeStart
+    ? '<span class="chip warn">3주 시작(' + short(P.start) + ') 전이다 — 아래는 1주차 루틴이다</span>'
+    : (st.afterEnd ? '<span class="chip warn">3주가 끝났다 — 아래는 3주차 루틴이고, 다음 3주를 짜기 전까지 그대로 이어서 한다</span>' : '');
 
-    /* 항목을 누르면 저장하고 화면의 진행 표시만 갱신한다. 다 끝내면 완료 버튼도 같이 바뀐다. */
-    if (canSave) {
-      SES.wire(box, day, () => rec, (r, p) => {
+  box.innerHTML =
+    outOfRange +
+    '<div class="today-head">' +
+      '<span class="dnum">' + short(today) + ' (' + window.DB_DOW(today) + ')</span>' +
+      '<span class="dtheme">' + esc(hw.theme) + '</span>' +
+      '<span class="chip accent">' + st.currentWeek + '주차' + (st.inPlan ? ' · ' + st.dayNo + '일째' : '') + '</span>' +
+      '<span class="chip mute">' + window.DB_HOME_MIN(hw) + '분</span>' +
+      '<span class="chip mute">이번 주 ' + st.homeWeekDone + '/' + st.homeWeekDates.length + '일</span>' +
+      homeBtn() +
+    '</div>' +
+    '<p style="color:var(--ink-2);margin:.1rem 0 .2rem">' + esc(hw.headline) + '</p>' +
+    '<div class="gearbox"><span class="label">집에 두고 쓰는 것</span>' +
+      P.fixed.gearHome.map(g => '<span class="chip mute">' + esc(g) + '</span>').join('') + '</div>' +
+    SES.progressHTML(hw, rec, { readonly: !canSave }) +
+    SES.blocksHTML(hw, rec, { readonly: !canSave }) +
+    (st.fieldWeekDone < st.fieldWeek.length
+      ? '<p class="afterbox"><b>오늘 나간다면</b>이번 주 운동장 자리가 ' + (st.fieldWeek.length - st.fieldWeekDone) + '개 남아 있다. 운동장에 다녀온 날은 위 ④ 코어와 ⑤ 둔근을 한 세트씩 줄이고, ⑥ 마무리에 수건 폼롤링을 더한다.</p>'
+      : '<p class="afterbox"><b>이번 주</b>운동장 2회를 모두 채웠다. 남은 날은 집 루틴만 하면 된다.</p>') +
+    window.DB_MOVES_PANEL(hw, '_dashboard/');
+
+  if (canSave) {
+    SES.wire(box, hw, () => rec, (r) => {
+      if (!LOG.save(d)) return;
+      SES.sync(box, hw, r);
+      const btn = $('homeState');
+      if (btn) {
+        btn.dataset.state = r.done ? 'done' : 'today';
+        btn.textContent = r.done ? '완료' : '오늘';
+        btn.setAttribute('aria-pressed', !!r.done);
+      }
+      const s2 = LOG.stats(d, P);
+      $('kHome').textContent = s2.homeDone;
+      $('kStreak').textContent = s2.streak || '—';
+    });
+  }
+  $('homeState')?.addEventListener('click', e => {
+    if (e.currentTarget.disabled) return;
+    rec.done = !rec.done;
+    if (!LOG.save(d)) { e.currentTarget.disabled = true; return; }
+    location.reload();
+  });
+
+  /* ═══ 이번 주 운동장 2회 ═══
+     요일이 없다. 그 주의 자리 두 개를 나가는 날에 채운다. */
+  $('fieldWrap').innerHTML = st.fieldWeek.map(x => {
+    const fr = d.field[x.id] || {};
+    const state = fr.done ? 'done' : 'todo';
+    return '<div class="panel" data-span="6" id="' + x.id + '">' +
+      '<div class="ph"><h2>운동장 ' + x.slotLabel + '</h2>' +
+        '<span class="label">' + esc(x.focus) + ' 중심 · ' + window.DB_FIELD_MIN(x) + '분</span>' +
+        '<button class="dstate" type="button" data-fid="' + x.id + '" data-state="' + state + '" aria-pressed="' + (state === 'done') + '"' +
+        (canSave ? ' title="나갔다 온 날 눌러 완료로 바꾼다"' : ' disabled') + '>' + (fr.done ? '완료' : '예정') + '</button>' +
+      '</div>' +
+      '<div class="pb">' +
+      '<div class="fslot">' +
+        '<span class="sl">' + x.id.toUpperCase() + '</span>' +
+        '<span style="font-weight:600;font-size:1.02rem">' + esc(x.theme) + '</span>' +
+      '</div>' +
+      '<div class="fslot" style="margin-bottom:.3rem">' +
+        '<span class="chip mute">RPE ' + esc(x.rpe) + '</span>' +
+        '<span class="chip mute">약 ' + x.kcal + ' kcal</span>' +
+        '<span class="chip mute">' + x.km.toFixed(1) + ' km</span>' +
+        (fr.at ? '<span class="chip good">' + short(fr.at) + ' 수행</span>' : '') +
+      '</div>' +
+      '<p style="color:var(--ink-2);margin:.1rem 0 .3rem">' + esc(x.headline) + '</p>' +
+      SES.gearHTML(x, P.fixed) +
+      SES.progressHTML(x, fr, { readonly: !canSave }) +
+      SES.blocksHTML(x, fr, { readonly: !canSave }) +
+      '<div class="banlist"><span class="label" style="align-self:center">하지 않는 것</span>' +
+        x.ban.map(v => '<span class="chip">' + esc(v) + '</span>').join('') + '</div>' +
+      SES.afterHTML(x, '#todayBox') +
+      window.DB_MOVES_PANEL(x, '_dashboard/') +
+      '</div></div>';
+  }).join('');
+
+  if (canSave) {
+    for (const x of st.fieldWeek) {
+      const card = document.getElementById(x.id);
+      if (!card) continue;
+      SES.wire(card, x, () => d.field[x.id] || (d.field[x.id] = {}), (r) => {
+        if (r.done && !r.at) r.at = today;      // 다 체크하면 나간 날짜를 오늘로 적어 둔다
         if (!LOG.save(d)) return;
-        SES.sync(box, day, r);
-        const btn = $('todayState');
-        if (btn) {
-          const s2 = stateOf(day);
-          btn.dataset.state = s2;
-          btn.textContent = LABEL[s2];
-          btn.setAttribute('aria-pressed', s2 === 'done');
-        }
-        $('kDone').textContent = LOG.stats(d, P).doneCount;
+        SES.sync(card, x, r);
+        const b = card.querySelector('.dstate');
+        if (b) { b.dataset.state = r.done ? 'done' : 'todo'; b.textContent = r.done ? '완료' : '예정'; }
+        $('kField').textContent = LOG.stats(d, P).fieldDone;
       });
     }
-
-    $('kToday').textContent = isToday ? day.theme : '휴식';
-    $('kTodaySub').textContent = isToday
-      ? (day.week + '주차 · RPE ' + day.rpe + ' · 약 ' + day.kcal + ' kcal')
-      : ('다음 세션 ' + day.date.slice(5).replace('-', '/') + ' (' + day.dow + ')');
   }
+  $('fieldWrap').addEventListener('click', e => {
+    const btn = e.target.closest('.dstate');
+    if (!btn || btn.disabled || !btn.dataset.fid) return;
+    const r = d.field[btn.dataset.fid] || (d.field[btn.dataset.fid] = {});
+    r.done = !r.done;
+    if (r.done && !r.at) r.at = today; else if (!r.done) delete r.at;
+    if (!LOG.save(d)) { btn.disabled = true; return; }
+    location.reload();
+  });
 
-  /* ── KPI ── */
-  $('kDone').textContent = st.doneCount;
-  $('kDoneBar').style.width = st.donePct + '%';
-  $('kDoneSub').textContent = st.hasData
-    ? (st.donePct + '% 완료 · 이번 주 ' + st.weekDone + '/5')
-    : '기록 페이지에서 체크하면 채워진다';
+  /* ═══ KPI ═══ */
+  $('kToday').textContent = rec.done ? '집 루틴 완료' : '집 근력 루틴';
+  $('kTodaySub').textContent = st.currentWeek + '주차 · ' + window.DB_HOME_MIN(hw) + '분 · ' +
+    (st.fieldWeekDone < st.fieldWeek.length ? '운동장 자리 ' + (st.fieldWeek.length - st.fieldWeekDone) + '개 남음' : '운동장 2회 완료');
+  $('kStreak').textContent = st.streak || '—';
+  $('kStreakSub').textContent = st.streak >= 3 ? '끊지 않는 것이 이 루틴의 전부다' : '하루도 안 빠진 날수';
+  $('kHome').textContent = st.homeDone;
+  $('kHomeBar').style.width = st.homePct + '%';
+  $('kHomeSub').textContent = st.hasData ? (st.homePct + '% · 이번 주 ' + st.homeWeekDone + '/' + st.homeWeekDates.length) : '오늘 카드에서 체크하면 채워진다';
+  $('kField').textContent = st.fieldDone;
+  $('kFieldBar').style.width = Math.round(st.fieldDone / st.fieldTotal * 100) + '%';
+  $('kFieldSub').textContent = '이번 주 ' + st.fieldWeekDone + ' / ' + st.fieldWeek.length;
   $('kNrs').textContent = md(st.nrsAvg, 1);
   if (st.nrsAvg != null) {
     $('kNrs').classList.add(st.nrsAvg <= 3 ? 'up' : 'down');
@@ -351,28 +452,35 @@
   if (st.weightDelta != null) {
     $('kWSub').textContent = '시작 대비 ' + (st.weightDelta > 0 ? '+' : '−') + Math.abs(st.weightDelta).toFixed(1) + 'kg · BMI ' + md(st.bmi, 1);
   }
-  $('kKm').textContent = st.kmSum ? st.kmSum.toFixed(1) : '—';
-  $('kStreak').textContent = st.streak || '—';
 
-  /* ── 단계 ── */
-  $('stepList').innerHTML = P.weeks.map((w, i) => {
+  /* ═══ 지금 ═══ */
+  const cw = P.weeks[st.currentWeek - 1];
+  $('hdWeek').textContent = st.currentWeek + '주차';
+  $('nowStage').textContent = cw.id + ' · ' + cw.title + ' (' + cw.range + ')';
+  $('nowText').textContent = cw.goal;
+  $('nextList').innerHTML = [
+    '오늘의 집 루틴을 마치고 무릎 NRS를 <a data-page="_dashboard/log.html">기록</a>에 적는다',
+    (st.fieldWeekDone < st.fieldWeek.length
+      ? '이번 주 운동장 ' + (st.fieldWeek.length - st.fieldWeekDone) + '자리가 남았다 — 두 번 사이에 하루 이상을 비운다'
+      : '이번 주 운동장 2회는 채웠다. 다음 주 1/2부터 다시 시작한다'),
+    '푸시업은 8회가 쉬워지면 횟수가 아니라 <b>손 짚는 높이</b>를 낮춘다 (D11)',
+    '어깨 앞이나 팔꿈치 안쪽이 시큰하면 다음날 사다리를 한 칸 내린다 (R4)',
+  ].map(x => '<li>' + x + '</li>').join('');
+
+  /* ═══ 단계 ═══ */
+  $('stepList').innerHTML = P.weeks.map(w => {
     let status = w.status;
-    if (st.hasData) {
-      const wd = P.days.filter(x => x.week === w.no);
-      const alldone = wd.length && wd.every(x => (d.sessions[x.date] || {}).done);
-      if (alldone) status = 'done';
-      else if (w.no === st.currentWeek) status = 'active';
-      else if (w.no < st.currentWeek) status = 'done';
-    }
+    if (w.no < st.currentWeek) status = 'done';
+    else if (w.no === st.currentWeek) status = 'active';
+    else status = 'todo';
     const tag = status === 'active' ? ' <span class="tag active">진행 중</span>' : status === 'done' ? '' : ' <span class="tag gate">gate</span>';
+    const sub = w.field ? ' <span class="label">운동장 ' + w.field + '회 · 집 ' + w.home + '일 · 약 ' + w.kcal.toLocaleString() + ' kcal · ' + w.km + ' km</span>' : '';
     return '<li class="step" data-status="' + status + '" id="s' + w.no + '"><div class="mark"><span>' + w.no + '</span></div><div>' +
       '<h3>' + w.id + ' · ' + esc(w.title) + ' <span class="label">' + esc(w.range) + '</span>' + tag + '</h3>' +
-      '<div class="d">' + esc(w.goal) + (w.sessions ? ' <span class="label">' + w.sessions + '세션 · 약 ' + w.kcal.toLocaleString() + ' kcal · ' + w.km + ' km</span>' : '') + '</div>' +
+      '<div class="d">' + esc(w.goal) + sub + '</div>' +
       '<div class="done-when"><b>통과 조건</b>' + esc(w.gate) + '</div>' +
       '</div></li>';
   }).join('');
-
-  /* 진행률 — dashboard.js 의 자동 계산은 이 목록이 그려지기 전에 끝나므로 여기서 다시 채운다 */
   (function () {
     const steps = [...$('stepList').querySelectorAll('.step')];
     const prog = $('stepList').parentElement.querySelector('.progress');
@@ -383,16 +491,74 @@
     prog.querySelector('.pct').textContent = dn + ' / ' + steps.length + ' 단계 · ' + p + '%';
   })();
 
-  $('hdWeek').textContent = st.currentWeek + '주차';
-  const cw = P.weeks[st.currentWeek - 1];
-  $('nowStage').textContent = cw.id + ' · ' + cw.title + ' (' + cw.range + ')';
+  /* ═══ 21일 격자 ═══ */
+  (function () {
+    let html = '';
+    for (let w = 1; w <= 3; w++) {
+      html += '<div class="d21row">' + w + '주차 · ' + esc(P.weeks[w - 1].range) + '</div><div class="d21">';
+      for (let i = (w - 1) * 7 + 1; i <= w * 7; i++) {
+        const k = window.DB_DATE_OF(i);
+        const r = d.sessions[k] || {};
+        const s = r.done ? 'done' : (k === today ? 'today' : (k < today ? 'miss' : 'todo'));
+        html += '<div class="c" data-s="' + s + '" title="' + k + '">' +
+          '<span class="n">' + i + '일째</span>' +
+          '<span class="dd">' + short(k) + '</span>' +
+          '<span class="w">' + window.DB_DOW(k) + '</span></div>';
+      }
+      html += '</div>';
+    }
+    $('d21Box').innerHTML = html;
+    $('d21Label').textContent = st.homeDone + ' / 21 수행';
+    $('d21Foot').innerHTML = '<span>연속 <b>' + (st.streak || 0) + '</b>일</span>' +
+      '<span>이번 주 <b>' + st.homeWeekDone + ' / ' + st.homeWeekDates.length + '</b></span>' +
+      '<span>1주차 <b>' + window.DB_HOME_MIN(P.home.weeks[0]) + '분</b></span>' +
+      '<span>2주차 <b>' + window.DB_HOME_MIN(P.home.weeks[1]) + '분</b></span>' +
+      '<span>3주차 <b>' + window.DB_HOME_MIN(P.home.weeks[2]) + '분</b></span>';
+  })();
 
-  /* ── 차트 ── */
-  DB.barChart('chartLoad', {
-    labels: P.days.map(x => x.date.slice(5).replace('-', '/')),
-    values: P.days.map(x => x.kcal), yfmt: 'int',
-  });
+  /* ═══ 운동장 6세션 표 ═══ */
+  DB.table('tblField', P.field.map(x => {
+    const r = d.field[x.id] || {};
+    return {
+      slot: x.week + '주차 ' + x.slotLabel,
+      theme: x.theme, focus: x.focus, rpe: x.rpe, kcal: x.kcal,
+      at: r.at ? short(r.at) : '—',
+      state: r.done ? '완료' : (x.week < st.currentWeek ? '미수행' : '예정'),
+    };
+  }), [
+    { key: 'slot', label: '자리' },
+    { key: 'theme', label: '세션' },
+    { key: 'focus', label: '성격' },
+    { key: 'rpe', label: 'RPE' },
+    { key: 'kcal', label: 'kcal', fmt: 'int', num: true },
+    { key: 'at', label: '나간 날' },
+    { key: 'state', label: '상태', chip: { 완료: 'good', 미수행: 'warn', 예정: 'mute' } },
+  ]);
+  $('tblLabel').textContent = st.fieldDone + ' / 6 완료';
+  (function () {
+    const ws = P.weeks.filter(w => w.field);
+    const sum = ws.reduce((a, w) => a + w.kcal, 0);
+    $('kcalFoot').innerHTML = ws.map(w => '<span>' + w.no + '주차 <b>' + w.kcal.toLocaleString() + '</b></span>').join('') +
+      '<span>합계 <b>' + sum.toLocaleString() + ' kcal</b></span>' +
+      '<span>실제 <b>' + Math.round(st.kcalSum).toLocaleString() + '</b></span>';
+  })();
 
+  /* ═══ 사다리 · 규칙 ═══ */
+  $('ladderBox').innerHTML = P.home.ladders.map(L => {
+    const now = { 푸시업: [1, 2, 3], 철봉: [1, 2, 3] }[L.k][st.currentWeek - 1];
+    return '<div class="ldr"><b>' + esc(L.k) + ' <span class="label">' + esc(L.unit) + '</span></b><ol>' +
+      L.steps.map((s, i) => '<li' + (i === now ? ' data-now' : '') + '>' +
+        '<span class="s">' + esc(s.s) + '</span>' +
+        '<span class="v">' + esc(s.v) + ' <span class="label">' + esc(s.d) + '</span></span></li>').join('') +
+      '</ol>' +
+      '<p style="color:var(--muted);font-size:.82rem;margin:.3rem 0 0">올릴 때 — ' + esc(L.up) + '<br>내릴 때 — ' + esc(L.down) + '</p></div>';
+  }).join('');
+  $('homeRules').innerHTML = P.home.rules.map(x => '<li>' + esc(x) + '</li>').join('');
+  $('minMin').textContent = P.home.minimum.min;
+  $('minList').innerHTML = P.home.minimum.items.map(x => '<li>' + esc(x) + '</li>').join('');
+  $('minNote').textContent = P.home.minimum.note;
+
+  /* ═══ 차트 ═══ */
   DB.lineChart('chartW', {
     series: [{ points: st.weightSeries, dots: true }],
     baseline: P.profile.weightStart, yfmt: 'num:1', xfmt: 'kstdate',
@@ -404,39 +570,11 @@
   DB.lineChart('chartNrs', {
     series: [{ points: st.nrsSeries }, { points: st.nrsAmSeries, color: '--good', area: false }],
     baseline: 3, yfmt: 'num:0', xfmt: 'kstdate',
-    empty: '세션 기록이 2회 이상 쌓이면 그려진다',
+    empty: '통증 기록이 2회 이상 쌓이면 그려진다',
   });
   ['nw1', 'nw2', 'nw3'].forEach((id, i) => { $(id).textContent = md(st.nrsByWeek[i], 1); });
 
-  /* ── 표 ── */
-  DB.table('tblDays', P.days.map(x => {
-    const r = d.sessions[x.date] || {};
-    return {
-      date: x.date.slice(5).replace('-', '/') + ' ' + x.dow,
-      wk: x.week, theme: x.theme, rpe: x.rpe, kcal: x.kcal,
-      home: window.DB_HOME_MIN(x),
-      state: r.done ? '완료' : (x.date < st.today ? '미기록' : '예정'),
-    };
-  }), [
-    { key: 'date', label: '날짜' },
-    { key: 'wk', label: '주', num: true },
-    { key: 'theme', label: '세션' },
-    { key: 'rpe', label: 'RPE' },
-    { key: 'kcal', label: 'kcal', fmt: 'int', num: true },
-    { key: 'home', label: '집', fmt: 'int', num: true },
-    { key: 'state', label: '상태', chip: { 완료: 'good', 미기록: 'warn', 예정: 'mute' } },
-  ]);
-  $('tblLabel').textContent = st.doneCount + ' / 15 완료';
-
-  /* 주차별 예상 소모 — plandata 의 값이 바뀌면 여기도 따라 바뀐다 */
-  (function () {
-    const ws = P.weeks.filter(w => w.sessions);
-    const sum = ws.reduce((a, w) => a + w.kcal, 0);
-    $('kcalFoot').innerHTML = ws.map(w => '<span>' + w.no + '주차 <b>' + w.kcal.toLocaleString() + '</b></span>').join('') +
-      '<span>합계 <b>' + sum.toLocaleString() + ' kcal</b></span>';
-  })();
-
-  /* ── 심박 구간 · 식단 ── */
+  /* ═══ 심박 구간 · 식단 ═══ */
   $('zoneBox').innerHTML = P.zones.map(z =>
     '<div class="zrow"><span class="zz">' + z.z + '</span><span>' + esc(z.name) + '</span>' +
     '<span class="zb">' + esc(z.bpm) + ' bpm · ' + esc(z.pct) + '</span>' +
@@ -445,9 +583,9 @@
   $('dietBox').innerHTML = P.diet.map(x =>
     '<dt>' + esc(x.k) + '</dt><dd>' + esc(x.v) + '<small>' + esc(x.why) + '</small></dd>').join('');
 
-  /* ── 저장소 상태를 상단 표시로 ── */
+  /* ═══ 저장소 상태 ═══ */
   const src = $('dbSource');
-  if (!LOG.available()) {
+  if (!canSave) {
     src.dataset.state = 'error';
     src.querySelector('.txt').textContent = '브라우저 저장 불가 — 계획만 표시';
   } else if (st.hasData) {
@@ -456,16 +594,6 @@
   } else {
     src.querySelector('.txt').textContent = '기록 없음 · 계획만 표시';
   }
-
-  /* 완료 여부를 바꾸면 지표 · 단계 · 표가 모두 달라지므로 다시 읽어 그린다 */
-  $('todayState')?.addEventListener('click', e => {
-    const btn = e.currentTarget;
-    if (btn.disabled) return;
-    const rec = d.sessions[btn.dataset.date] || (d.sessions[btn.dataset.date] = {});
-    rec.done = !rec.done;
-    if (!LOG.save(d)) { btn.disabled = true; btn.title = '저장하지 못했다'; return; }
-    location.reload();
-  });
 
   DB.conversations('convRecent', null, window.DB_CONVERSATIONS, { limit: 5 });
   DB.refresh();
